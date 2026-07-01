@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>砺 · AI 研发工作空间（员工端）原型 v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15181E; --ink-2:#1C212B; --ink-3:#272E3A;
+  --paper:#FAFAF7; --panel:#FFFFFF; --panel-2:#F4F4EF;
+  --line:#E7E6DE; --line-2:#EFEEE8;
+  --text:#1A1D24; --text-2:#5C616C; --text-3:#8B909B;
+  --on-ink:#E9EBF0; --on-ink-2:#A6ABB8; --on-ink-3:#6C7384;
+  --accent:#2D5BFF; --accent-d:#1E45D6; --accent-soft:#E9EEFF;
+  --teal:#0E9E6E; --teal-soft:#E1F6EE;
+  --amber:#D9820A; --amber-soft:#FBEFD8;
+  --red:#E14B4B; --red-soft:#FCE7E7;
+  --r:10px; --r-lg:14px; --r-sm:7px;
+  --shadow:0 1px 2px rgba(20,24,30,.04),0 6px 20px rgba(20,24,30,.06);
+  --shadow-lg:0 12px 40px rgba(20,24,30,.16);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--sans);background:var(--paper);color:var(--text);
+  font-size:14px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+.ic{flex:none;vertical-align:middle}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#D9D8CF;border-radius:9px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#C4C3B8;background-clip:content-box}
+
+/* ---------- top bar ---------- */
+.topbar{height:56px;background:var(--ink);color:var(--on-ink);display:flex;
+  align-items:center;gap:22px;padding:0 18px;position:relative;z-index:30}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.2px}
+.brand .logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#5C7BFF);
+  display:grid;place-items:center;font-size:17px;color:#fff;font-weight:800;box-shadow:0 2px 10px rgba(45,91,255,.45)}
+.brand small{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--on-ink-3);letter-spacing:0}
+.nav{display:flex;gap:2px;margin-left:8px}
+.nav button{padding:8px 15px;border-radius:8px;color:var(--on-ink-2);font-weight:600;font-size:13.5px;
+  display:flex;align-items:center;gap:7px;transition:.15s}
+.nav button:hover{color:#fff;background:var(--ink-3)}
+.nav button.on{color:#fff;background:var(--ink-3)}
+.nav button.on .ic{color:var(--accent)}
+.spacer{flex:1}
+.sync{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11.5px;color:var(--on-ink-2);
+  background:var(--ink-2);border:1px solid var(--ink-3);padding:6px 11px;border-radius:8px}
+.sync .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(14,158,110,.18)}
+.sync .dt{color:var(--on-ink);font-weight:600}
+.iconbtn{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;color:var(--on-ink-2);position:relative;transition:.15s}
+.iconbtn:hover{background:var(--ink-3);color:#fff}
+.iconbtn .badge{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--ink)}
+.role-pick{display:flex;align-items:center;gap:9px;background:var(--ink-2);border:1px solid var(--ink-3);
+  padding:5px 9px 5px 6px;border-radius:10px;transition:.15s}
+.role-pick:hover{border-color:#3A4354}
+.role-pick .av{width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:13px}
+.role-pick .rt{text-align:left;line-height:1.15}
+.role-pick .rt b{font-size:13px;color:#fff;font-weight:600;display:block}
+.role-pick .rt span{font-size:10.5px;color:var(--on-ink-3);font-family:var(--mono)}
+.role-menu{position:absolute;top:50px;right:18px;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;box-shadow:var(--shadow-lg);padding:6px;width:248px;display:none;z-index:40}
+.role-menu.open{display:block;animation:pop .16s ease}
+.role-menu h6{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:8px 10px 5px;font-weight:700}
+.role-menu button{width:100%;display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:9px;text-align:left;color:var(--text)}
+.role-menu button:hover{background:var(--panel-2)}
+.role-menu button.on{background:var(--accent-soft)}
+.role-menu .av{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:700;color:#fff;font-size:13px}
+.role-menu .meta b{font-size:13.5px;font-weight:600;display:block}
+.role-menu .meta span{font-size:11px;color:var(--text-3);font-family:var(--mono)}
+.role-menu .soon{color:var(--text-3)}
+.role-menu .soon .av{background:var(--line)!important;color:var(--text-3)}
+.role-menu .tag-soon{margin-left:auto;font-size:10px;font-family:var(--mono);color:var(--text-3);
+  border:1px dashed var(--line);padding:2px 6px;border-radius:20px}
+
+/* ---------- views ---------- */
+.view{display:none;height:calc(100vh - 56px)}
+.view.on{display:block}
+
+/* ---------- workspace ---------- */
+.workspace{display:grid;grid-template-columns:266px minmax(0,1fr) 318px;height:100%}
+.col{height:100%;overflow-y:auto}
+.rail-l{background:var(--ink);color:var(--on-ink);padding:16px 12px;border-right:1px solid var(--ink-3)}
+.rail-l .lbl{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--on-ink-3);
+  font-weight:700;padding:6px 8px;display:flex;align-items:center;justify-content:space-between}
+.pcard{width:100%;text-align:left;background:var(--ink-2);border:1px solid transparent;border-radius:11px;
+  padding:12px;margin-bottom:8px;position:relative;overflow:hidden;transition:.15s}
+.pcard:hover{border-color:var(--ink-3);transform:translateY(-1px)}
+.pcard.on{background:var(--ink-3);border-color:var(--accent)}
+.pcard .urg{position:absolute;left:0;top:0;bottom:0;width:3px}
+.pcard.high .urg{background:var(--amber)} .pcard.mid .urg{background:var(--accent)} .pcard.low .urg{background:var(--on-ink-3)}
+.pcard .ptop{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.pcard .pico{width:30px;height:30px;border-radius:8px;background:var(--ink-3);display:grid;place-items:center;color:var(--accent);flex:none}
+.pcard.on .pico{background:var(--accent);color:#fff}
+.pcard .pname{font-weight:600;font-size:13.5px;color:#fff;line-height:1.25}
+.pcard .pstage{font-size:11px;color:var(--on-ink-2);font-family:var(--mono)}
+.pcard .pmeta{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--on-ink-2)}
+.kbd{background:rgba(255,255,255,.07);border:1px solid var(--ink-3);border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:11px}
+.kbd.warn{color:#F2C078;border-color:rgba(217,130,10,.4);background:rgba(217,130,10,.12)}
+.ring{margin-left:auto}
+.explore-card{border:1px dashed var(--ink-3);background:transparent}
+.explore-card .pico{background:rgba(45,91,255,.12)}
+.newproj{width:100%;display:flex;align-items:center;gap:8px;justify-content:center;color:var(--on-ink-2);
+  border:1px dashed var(--ink-3);border-radius:10px;padding:10px;font-weight:600;font-size:13px;margin-top:4px;transition:.15s}
+.newproj:hover{color:#fff;border-color:var(--on-ink-3)}
+
+/* center conversation */
+.canvas{background:
+  radial-gradient(circle at 1px 1px,rgba(20,24,30,.05) 1px,transparent 0) 0 0/22px 22px,var(--paper);
+  display:flex;flex-direction:column}
+.pjhead{padding:16px 26px;border-bottom:1px solid var(--line);background:rgba(250,250,247,.85);
+  backdrop-filter:blur(6px);display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:5}
+.pjhead .h-ico{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;flex:none}
+.pjhead h2{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.pjhead .sub{display:flex;gap:7px;align-items:center;margin-top:3px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:6px;background:var(--panel-2);
+  color:var(--text-2);border:1px solid var(--line);display:inline-flex;align-items:center;gap:5px}
+.chip.warn{background:var(--amber-soft);color:var(--amber);border-color:transparent}
+.chip.ok{background:var(--teal-soft);color:var(--teal);border-color:transparent}
+.chip.acc{background:var(--accent-soft);color:var(--accent-d);border-color:transparent}
+.h-path{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text-3);display:flex;align-items:center;gap:6px}
+.thread{flex:1;overflow-y:auto;padding:22px 26px 8px}
+.todostrip{margin-bottom:20px}
+.todostrip .th{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:10px}
+.todostrip .th .ic{color:var(--accent)}
+.todo-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.todo{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;
+  padding:12px 13px;text-align:left;transition:.16s;box-shadow:var(--shadow);position:relative}
+.todo:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-left-color:var(--accent-d)}
+.todo.blk{border-left-color:var(--amber)}
+.todo .tt{font-size:10px;font-family:var(--mono);font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:5px;display:inline-flex;align-items:center;gap:5px}
+.todo.blk .tt{color:var(--amber)}
+.todo p{font-size:13px;line-height:1.5;color:var(--text);font-weight:500}
+.todo .go{margin-top:9px;display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--accent)}
+.msg{display:flex;gap:12px;margin-bottom:20px;max-width:760px}
+.msg .who{width:32px;height:32px;border-radius:9px;flex:none;display:grid;place-items:center;font-weight:700;font-size:13px}
+.msg.user .who{background:var(--ink);color:#fff}
+.msg.ai .who{background:var(--accent-soft);color:var(--accent)}
+.msg .body{flex:1;padding-top:3px}
+.msg .nm{font-size:11.5px;font-weight:700;color:var(--text-2);margin-bottom:5px;display:flex;align-items:center;gap:7px}
+.msg .nm .role-mark{font-family:var(--mono);font-weight:500;color:var(--text-3);font-size:10.5px}
+.msg .txt{font-size:14px;line-height:1.6}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin:9px 0;font-size:13px}
+.fact .flbl{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.refs{margin:10px 0}
+.refs .rlbl{font-size:11px;color:var(--text-3);font-weight:600;margin-bottom:7px}
+.ref{display:flex;align-items:flex-start;gap:10px;background:var(--panel);border:1px solid var(--line);
+  border-radius:9px;padding:10px 12px;margin-bottom:7px;transition:.14s}
+.ref:hover{border-color:var(--accent);transform:translateX(2px)}
+.ref .n{width:20px;height:20px;border-radius:6px;background:var(--panel-2);color:var(--text-2);display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:600;flex:none;margin-top:1px}
+.ref .rmain{flex:1}
+.ref .rtitle{font-size:13px;font-weight:500;color:var(--text)}
+.ref .src{font-family:var(--mono);font-size:10.5px;color:var(--text-3);margin-top:2px;display:flex;align-items:center;gap:5px}
+.src .zone{padding:0 6px;border-radius:5px;font-weight:600}
+.zone.ok{background:var(--teal-soft);color:var(--teal)} .zone.pre{background:var(--accent-soft);color:var(--accent-d)} .zone.ext{background:var(--panel-2);color:var(--text-2)}
+.confirm-bar{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:var(--amber-soft);
+  border:1px solid rgba(217,130,10,.25);border-radius:9px;font-size:12.5px;color:var(--amber)}
+.confirm-bar .ic{color:var(--amber)}
+.confirm-bar b{color:#9A5C04}
+.confirm-bar .btns{margin-left:auto;display:flex;gap:7px}
+.confirm-bar button{font-size:12px;font-weight:700;padding:5px 12px;border-radius:7px;background:#fff;border:1px solid rgba(217,130,10,.35);color:var(--amber)}
+.confirm-bar button.pri{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* composer */
+.composer{padding:14px 26px 20px;border-top:1px solid var(--line);background:var(--paper)}
+.insert-row{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.insert-row .ilbl{font-size:11px;color:var(--text-3);font-weight:600;margin-right:2px}
+.ins{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text-2);
+  background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:6px 12px;transition:.14s}
+.ins:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.ins .ic{color:var(--accent)}
+.inputwrap{display:flex;align-items:flex-end;gap:10px;background:var(--panel);border:1.5px solid var(--line);
+  border-radius:14px;padding:10px 10px 10px 16px;box-shadow:var(--shadow);transition:.16s}
+.inputwrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.inputwrap textarea{flex:1;border:none;outline:none;resize:none;font-family:inherit;font-size:14px;
+  background:none;color:var(--text);max-height:120px;padding:5px 0}
+.send{width:38px;height:38px;border-radius:10px;background:var(--accent);color:#fff;display:grid;place-items:center;transition:.15s;flex:none}
+.send:hover{background:var(--accent-d)}
+.txt.thinking{color:var(--text-3);font-style:italic}
+.txt b{font-weight:700}
+.txt code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:1px 5px;border-radius:4px}
+.mimo-badge{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);font-weight:600;color:var(--teal);background:var(--teal-soft);padding:5px 11px;border-radius:20px;cursor:default}
+.mimo-badge .ic{color:var(--teal)}
+
+/* right rail */
+.rail-r{background:var(--panel);border-left:1px solid var(--line);padding:18px}
+.rail-r section{margin-bottom:22px}
+.rail-r .sh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);font-weight:700;
+  margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.rail-r .sh .ic{color:var(--accent)}
+.mem{font-size:13px}
+.mem .row{display:flex;gap:9px;padding:7px 0;border-bottom:1px dashed var(--line-2)}
+.mem .row:last-child{border:none}
+.mem .k{color:var(--text-3);font-size:12px;min-width:54px;font-weight:600;font-family:var(--mono)}
+.mem .v{color:var(--text);flex:1}
+.declist{list-style:none;font-size:12.5px}
+.declist li{padding:6px 0 6px 16px;position:relative;color:var(--text-2)}
+.declist li::before{content:"";position:absolute;left:2px;top:12px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.blocker{background:var(--amber-soft);border:1px solid rgba(217,130,10,.22);border-radius:10px;padding:11px 12px}
+.blocker .bt{display:flex;align-items:center;gap:7px;font-weight:700;color:var(--amber);font-size:13px}
+.blocker .bd{font-family:var(--mono);font-size:11.5px;color:#9A5C04;margin-top:5px}
+.blocker .rep{margin-top:8px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;
+  color:var(--teal);background:var(--teal-soft);padding:3px 9px;border-radius:20px}
+.out{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line-2)}
+.out:last-child{border:none}
+.out .oi{width:30px;height:30px;border-radius:8px;background:var(--panel-2);color:var(--text-2);display:grid;place-items:center;flex:none}
+.out .on-n{font-size:12.5px;font-weight:600;line-height:1.3}
+.out .os{font-family:var(--mono);font-size:10.5px;color:var(--text-3);margin-top:1px}
+
+/* ---------- create & cases shared ---------- */
+.page{height:100%;overflow-y:auto;padding:30px 40px 60px}
+.page-h{max-width:1080px;margin:0 auto 26px}
+.page-h .eyebrow{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+.page-h h1{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:8px 0 6px}
+.page-h p{color:var(--text-2);max-width:640px;font-size:14.5px}
+.page-h .actions{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:13px;padding:9px 16px;border-radius:10px;transition:.15s}
+.btn.pri{background:var(--ink);color:#fff}.btn.pri:hover{background:var(--ink-2)}
+.btn.ghost{background:var(--panel);border:1px solid var(--line);color:var(--text-2)}.btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
+.beta{font-size:10.5px;font-family:var(--mono);font-weight:600;color:var(--accent);background:var(--accent-soft);padding:3px 9px;border-radius:20px}
+.grid{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:16px}
+.tool{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;transition:.18s;text-align:left;box-shadow:var(--shadow)}
+.tool:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--accent)}
+.tool .ti{width:42px;height:42px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;margin-bottom:13px}
+.tool h3{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.tool p{font-size:12.5px;color:var(--text-2);margin-top:5px;min-height:34px}
+.tool .insertbtn{margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:12.5px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:9px;padding:9px;transition:.14s}
+.tool:hover .insertbtn{background:var(--accent);color:#fff}
+
+/* cases */
+.filterbar{max-width:1080px;margin:0 auto 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.searchbox{flex:1;min-width:240px;display:flex;align-items:center;gap:9px;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;padding:9px 14px}
+.searchbox input{border:none;outline:none;background:none;font-family:inherit;font-size:14px;flex:1;color:var(--text)}
+.searchbox .ic{color:var(--text-3)}
+.fchip{font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--panel);border:1px solid var(--line);
+  padding:8px 14px;border-radius:9px;transition:.14s}
+.fchip:hover{border-color:var(--accent);color:var(--accent)}
+.fchip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cgrid{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.case{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);transition:.16s;display:flex;flex-direction:column}
+.case:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.case .chead{display:flex;align-items:center;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.case .cid{font-family:var(--mono);font-size:11px;color:var(--text-3);font-weight:600}
+.badge{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;font-family:var(--mono)}
+.b-ok{background:var(--teal-soft);color:var(--teal)} .b-pre{background:var(--accent-soft);color:var(--accent-d)}
+.b-unk{background:var(--panel-2);color:var(--text-2);border:1px dashed var(--line)}
+.b-succ{background:var(--teal-soft);color:var(--teal)} .b-fail{background:var(--red-soft);color:var(--red)}
+.case h3{font-size:15.5px;font-weight:700;letter-spacing:-.2px;margin-bottom:10px}
+.kv{font-size:12.5px;display:flex;gap:8px;padding:4px 0}
+.kv .kk{font-family:var(--mono);font-size:11px;color:var(--text-3);min-width:40px;font-weight:600;flex:none}
+.kv .vv{color:var(--text);flex:1}
+.constraint{margin-top:10px;background:var(--panel-2);border-radius:9px;padding:9px 11px;font-size:12px}
+.constraint .cl{font-family:var(--mono);font-size:10px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.cfoot{margin-top:auto;padding-top:13px;border-top:1px dashed var(--line-2);display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--text-3)}
+.cfoot .owner{display:flex;align-items:center;gap:6px;color:var(--text-2);font-weight:600}
+.cfoot .owner .oav{width:20px;height:20px;border-radius:6px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:700}
+.cfoot .reuse{margin-left:auto;font-family:var(--mono);color:var(--accent);font-weight:600}
+.unk-note{background:var(--panel-2);border:1px dashed var(--line);border-radius:9px;padding:11px;font-size:12.5px;color:var(--text-2);margin-top:4px}
+
+/* AI meeting */
+.ai-meeting-btn{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:#fff;background:var(--accent);padding:8px 14px;border-radius:9px;transition:.15s;flex:none}
+.ai-meeting-btn:hover{background:var(--accent-d);transform:translateY(-1px)}
+.meeting-overlay{position:fixed;inset:0;background:var(--paper);z-index:55;display:none;flex-direction:column}
+.meeting-overlay.open{display:flex;animation:fade .25s ease}
+.m-head{height:60px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 26px;border-bottom:1px solid var(--line);background:var(--panel)}
+.m-title{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:800;letter-spacing:-.3px}
+.m-title .ic{color:var(--accent)}
+.m-title .mp{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text-3);border-left:1px solid var(--line);padding-left:11px}
+.m-close{font-size:13px;font-weight:700;color:var(--text-2);padding:8px 14px;border-radius:9px;border:1px solid var(--line)}
+.m-close:hover{border-color:var(--red);color:var(--red)}
+.m-stepper{flex:none;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;gap:2px}
+.m-step{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-3);padding:7px 13px;border-radius:20px;transition:.15s}
+.m-step .m-sn{width:22px;height:22px;border-radius:50%;background:var(--panel-2);color:var(--text-3);display:grid;place-items:center;font-size:11px;font-family:var(--mono);font-weight:600;flex:none}
+.m-step.on{color:var(--accent);background:var(--accent-soft)}
+.m-step.on .m-sn{background:var(--accent);color:#fff}
+.m-step.done{color:var(--teal)}
+.m-step.done .m-sn{background:var(--teal-soft);color:var(--teal)}
+.m-sep{width:22px;height:2px;background:var(--line)}
+.m-body{flex:1;overflow-y:auto;padding:28px;width:100%;max-width:1000px;margin:0 auto}
+.m-foot{flex:none;display:flex;align-items:center;justify-content:space-between;padding:15px 26px;border-top:1px solid var(--line);background:var(--panel)}
+.m-back{font-size:13px;font-weight:700;color:var(--text-2);padding:10px 16px;border-radius:10px;border:1px solid var(--line)}
+.m-back:hover{border-color:var(--text-2)}
+.m-progress{font-family:var(--mono);font-size:12px;color:var(--text-3)}
+.m-next{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:#fff;background:var(--accent);padding:11px 20px;border-radius:10px}
+.m-next:hover{background:var(--accent-d)}
+.m-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow)}
+.m-field{margin-bottom:18px}.m-field:last-child{margin:0}
+.m-field label{display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px}
+.m-input{font-size:16px;font-weight:600;padding:11px 14px;background:var(--panel-2);border-radius:9px}
+.m-textarea{font-size:14px;line-height:1.6;padding:13px 14px;background:var(--panel-2);border-radius:9px;border-left:3px solid var(--accent)}
+.m-parts{display:flex;gap:10px;flex-wrap:wrap}
+.m-part{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--panel-2);padding:5px 13px 5px 5px;border-radius:20px}
+.m-av{width:24px;height:24px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:700}
+.m-hint{margin-top:18px;display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--text-2);background:var(--accent-soft);border-radius:9px;padding:12px 14px;line-height:1.55}
+.m-hint .ic{color:var(--accent);margin-top:1px;flex:none}.m-hint b{color:var(--accent-d)}
+.m-modebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.m-modes{display:flex;gap:8px}
+.m-mode{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text-2);background:var(--panel);border:1.5px solid var(--line);padding:9px 15px;border-radius:10px;transition:.15s}
+.m-mode:hover{border-color:var(--accent)}
+.m-mode.on{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.m-rec-tag{font-size:10px;font-family:var(--mono);font-weight:600;color:var(--teal);background:var(--teal-soft);padding:2px 7px;border-radius:20px}
+.m-mode.on .m-rec-tag{background:#fff}
+.m-mode-sub{font-size:10.5px;font-weight:500;color:var(--text-3)}
+.m-feat{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);font-weight:600;color:var(--amber);background:var(--amber-soft);padding:5px 11px;border-radius:20px}
+.m-solo{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.6;color:var(--text);background:var(--accent-soft);border-radius:11px;padding:14px 16px;margin-bottom:20px;border-left:3px solid var(--accent)}
+.m-solo .ic{color:var(--accent);flex:none;margin-top:2px}.m-solo b{color:var(--accent-d);font-weight:700}
+.m-meet{display:grid;grid-template-columns:1fr 232px;gap:20px}
+.m-chat{display:flex;flex-direction:column;gap:14px;min-width:0}
+.m-turn{display:flex;gap:10px;max-width:88%}
+.m-turn.ai{align-self:flex-start}
+.m-turn.you{align-self:flex-end;flex-direction:row-reverse}
+.m-tav{width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;font-size:12px;font-weight:700}
+.m-turn.ai .m-tav{background:var(--accent-soft);color:var(--accent)}
+.m-turn.you .m-tav{background:var(--ink);color:#fff}
+.m-bwrap{min-width:0}
+.m-nm{font-size:10.5px;color:var(--text-3);font-weight:600;margin-bottom:4px}
+.m-turn.you .m-nm{text-align:right}
+.m-bub{padding:11px 14px;border-radius:14px;font-size:13.5px;line-height:1.55}
+.m-turn.ai .m-bub{background:var(--accent-soft);color:var(--text);border-top-left-radius:4px}
+.m-turn.you .m-bub{background:var(--ink);color:#fff;border-top-right-radius:4px}
+.m-voicebar{display:flex;align-items:center;gap:13px;margin-top:6px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.m-vmic{width:34px;height:34px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;flex:none;animation:pulse 1.6s infinite}
+.m-wave.sm{width:120px;height:24px;flex:none}
+.m-vtext{font-size:12.5px;color:var(--text-2);font-weight:500}
+.m-agenda{align-self:start;background:var(--panel-2);border-radius:12px;padding:15px}
+.m-arh{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:12px}
+.m-arh .ic{color:var(--accent)}
+.m-aitem{display:flex;align-items:center;gap:9px;font-size:12.5px;padding:8px 0;color:var(--text-3);border-bottom:1px dashed var(--line-2)}
+.m-aitem:last-of-type{border:none}
+.m-aitem.done{color:var(--text)}
+.m-aitem.now{color:var(--accent);font-weight:600}
+.m-adot{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--teal-soft);color:var(--teal)}
+.m-aitem.now .m-adot{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.m-anote{font-size:11px;line-height:1.5;color:var(--text-3);margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+@media(max-width:760px){.m-meet{grid-template-columns:1fr}}
+.m-tag{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-family:var(--mono);font-weight:600;color:var(--accent);background:var(--accent-soft);padding:6px 13px;border-radius:20px;margin-bottom:18px}
+.m-tag.ok{color:var(--teal);background:var(--teal-soft)}
+.m-outline{display:flex;flex-direction:column;gap:10px}
+.m-oitem{display:flex;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:15px 16px;box-shadow:var(--shadow)}
+.m-onum{width:26px;height:26px;border-radius:8px;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--mono);font-weight:600;font-size:13px;flex:none}
+.m-ocat{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+.m-oq{font-size:14.5px;font-weight:500}
+.m-voice{display:flex;flex-direction:column;gap:18px}
+.m-rec{display:flex;align-items:center;gap:18px;background:var(--ink);border-radius:14px;padding:18px 24px}
+.m-mic{width:48px;height:48px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;flex:none;animation:pulse 1.6s ease infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(225,75,75,.5)}50%{box-shadow:0 0 0 13px rgba(225,75,75,0)}}
+.m-wave{flex:1;display:flex;align-items:center;gap:3px;height:42px}
+.m-wave span{flex:1;background:var(--accent);border-radius:3px;height:20%;animation:wave 1s ease infinite}
+@keyframes wave{0%,100%{height:15%}50%{height:92%}}
+.m-timer{font-family:var(--mono);font-size:13px;font-weight:600;color:#fff;background:rgba(225,75,75,.2);padding:6px 12px;border-radius:8px;flex:none}
+.m-trans{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.m-tline{display:flex;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line-2)}.m-tline:last-child{border:none}
+.m-tline .m-who{min-width:34px;height:28px;padding:0 6px;border-radius:8px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.m-tline.ai .m-who{background:var(--accent-soft);color:var(--accent)}
+.m-tline p{font-size:14px;line-height:1.55}.m-tline.ai p{color:var(--text-2);font-style:italic}
+.m-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.m-col{border-radius:14px;padding:16px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow)}
+.m-col.self{border-top:3px solid var(--teal)}.m-col.ext{border-top:3px solid var(--accent)}.m-col.risk{border-top:3px solid var(--amber)}
+.m-ch{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;margin-bottom:10px}
+.m-col.self .m-ch{color:var(--teal)}.m-col.ext .m-ch{color:var(--accent)}.m-col.risk .m-ch{color:var(--amber)}
+.m-li{font-size:13px;line-height:1.5;padding:9px 0;border-bottom:1px dashed var(--line-2)}.m-li:last-child{border:none}
+.m-li b{display:block;font-weight:700;margin-bottom:2px}.m-li span{font-size:12px;color:var(--text-2)}
+.m-rule{margin-top:16px;background:var(--amber-soft);border:1px solid rgba(217,130,10,.25);border-radius:12px;padding:16px;font-size:13.5px;color:#7A4A04;line-height:1.6}
+.m-rh{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14px;color:var(--amber);margin-bottom:8px}
+.m-pending{margin-left:auto;font-size:10.5px;font-family:var(--mono);font-weight:700;color:#9A5C04;background:#fff;border:1px dashed rgba(217,130,10,.5);padding:3px 9px;border-radius:20px}
+.m-review{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow);max-width:660px;margin:0 auto}
+.m-rstatus{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;color:var(--accent)}
+.m-rdot{width:9px;height:9px;border-radius:50%;background:var(--accent);animation:pulse2 1.4s infinite}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.25}}
+.m-rnote{font-size:13px;line-height:1.6;color:var(--text-2);background:var(--accent-soft);border-radius:10px;padding:13px;margin:14px 0;display:flex;gap:9px}
+.m-rnote .ic{color:var(--accent);flex:none;margin-top:2px}.m-rnote b{color:var(--accent-d)}
+.m-rlist{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.m-rrow{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;font-weight:500;padding:12px 14px;background:var(--panel-2);border-radius:10px}
+.m-ok{font-size:12px;font-weight:700;color:var(--teal);display:inline-flex;align-items:center;gap:5px;flex:none}
+.m-edit{font-size:12px;font-weight:700;color:var(--amber);flex:none}
+.m-rby{font-family:var(--mono);font-size:11.5px;color:var(--text-3);text-align:center}
+.m-dist{display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
+.m-drow{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 16px;box-shadow:var(--shadow)}
+.m-dto{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13.5px;min-width:160px}.m-dto .ic{color:var(--accent)}
+.m-ditem{flex:1;font-size:13px;color:var(--text-2)}
+.m-dtag{font-size:11px;font-family:var(--mono);font-weight:600;color:var(--accent);background:var(--accent-soft);padding:3px 10px;border-radius:20px;flex:none}
+.m-dtag.risk{color:var(--amber);background:var(--amber-soft)}
+.m-rev{background:var(--panel-2);border-radius:14px;padding:18px;margin-bottom:18px}
+.m-rev .m-rh{color:var(--text)}
+.m-revn{font-size:12.5px;color:var(--text-2);margin:6px 0 10px}
+@media(max-width:760px){.m-cols{grid-template-columns:1fr}}
+/* toast */
+.toast{position:fixed;right:22px;bottom:22px;width:370px;background:var(--ink);color:var(--on-ink);
+  border-radius:14px;padding:16px;box-shadow:var(--shadow-lg);z-index:60;display:none;border:1px solid var(--ink-3)}
+.toast.show{display:block;animation:slidein .3s cubic-bezier(.2,.8,.2,1)}
+.toast .th{display:flex;align-items:center;gap:9px;font-weight:700;font-size:13.5px;color:#fff}
+.toast .th .ti{width:30px;height:30px;border-radius:8px;background:rgba(217,130,10,.18);color:#F2C078;display:grid;place-items:center;flex:none}
+.toast .tx{font-size:12.5px;color:var(--on-ink-2);margin:9px 0 0;line-height:1.55}
+.toast .tx b{color:var(--on-ink);font-weight:600}
+.toast .meta{font-family:var(--mono);font-size:10.5px;color:var(--on-ink-3);margin-top:9px;display:flex;align-items:center;gap:6px}
+.toast .x{position:absolute;top:13px;right:13px;color:var(--on-ink-3)}
+.toast .x:hover{color:#fff}
+
+.fade{opacity:0;transform:translateY(8px);animation:fade .5s ease forwards}
+@keyframes fade{to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes slidein{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.hide{display:none!important}
+@media(max-width:1180px){.rail-r{display:none}.workspace{grid-template-columns:240px 1fr}}
+
+/* ---------- boss cockpit ---------- */
+:root{--boss:#7A3FF2;--boss-soft:#EDE6FF;--boss-d:#5B25C9}
+.nav button.boss-nav{display:none}
+body[data-role="boss"] .emp-nav{display:none}
+body[data-role="boss"] .boss-nav{display:flex}
+body[data-role="boss"] .nav button.on .ic{color:var(--boss)}
+.ck-page{height:100%;overflow-y:auto;padding:28px 36px 64px;background:
+  radial-gradient(circle at 1px 1px,rgba(20,24,30,.04) 1px,transparent 0) 0 0/24px 24px,var(--paper)}
+.ck-wrap{max-width:1180px;margin:0 auto}
+.ck-head{margin-bottom:22px}
+.ck-head .eyebrow{font-family:var(--mono);font-size:12px;color:var(--boss);font-weight:600;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+.ck-head h1{font-size:25px;font-weight:800;letter-spacing:-.5px;margin:8px 0 6px}
+.ck-head p{color:var(--text-2);max-width:700px;font-size:14px;line-height:1.6}
+.ck-head p b{color:var(--boss-d)}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:26px}
+@media(max-width:1080px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi .ki{width:30px;height:30px;border-radius:8px;background:var(--boss-soft);color:var(--boss);display:grid;place-items:center;margin-bottom:11px}
+.kpi.act .ki{background:var(--amber-soft);color:var(--amber)}
+.kpi.danger .ki{background:var(--red-soft);color:var(--red)}
+.kpi .kn{font-size:27px;font-weight:800;letter-spacing:-1px;font-family:var(--mono);line-height:1}
+.kpi .kn small{font-size:14px;font-weight:700}
+.kpi .kl{font-size:12px;color:var(--text-2);font-weight:600;margin-top:6px}
+.kpi .ks{font-size:11px;color:var(--text-3);margin-top:3px;font-family:var(--mono);line-height:1.4}
+.kpi.click{cursor:pointer;transition:.15s}.kpi.click:hover{border-color:var(--boss);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.ck-sec{margin-bottom:28px}
+.ck-sh{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;letter-spacing:-.2px;margin-bottom:13px}
+.ck-sh .ic{color:var(--boss)}
+.ck-sh .ck-fact{margin-left:auto;font-size:10.5px;font-family:var(--mono);font-weight:600;color:var(--teal);background:var(--teal-soft);padding:3px 9px;border-radius:20px;letter-spacing:0;display:inline-flex;align-items:center;gap:5px}
+.ck-sh .ck-cnt{font-family:var(--mono);font-size:12px;color:var(--text-3);font-weight:600}
+.pano{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:13px}
+.pano-c{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;box-shadow:var(--shadow);transition:.15s;position:relative;overflow:hidden}
+.pano-c:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.pano-c .pu{position:absolute;left:0;top:0;bottom:0;width:3px}
+.pano-c.high .pu{background:var(--amber)}.pano-c.mid .pu{background:var(--accent)}.pano-c.low .pu{background:var(--line)}
+.pano-top{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.pano-ico{width:32px;height:32px;border-radius:9px;background:var(--panel-2);color:var(--text-2);display:grid;place-items:center;flex:none}
+.pano-nm{font-size:14px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
+.pano-st{font-family:var(--mono);font-size:11px;color:var(--text-3);margin-top:1px}
+.pano-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--text-2)}
+.pano-owner{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--text-2)}
+.pano-oav{width:18px;height:18px;border-radius:5px;color:#fff;display:grid;place-items:center;font-size:10px;font-weight:700}
+.pano-blk{margin-top:10px;font-size:11.5px;color:var(--amber);display:flex;align-items:center;gap:6px;background:var(--amber-soft);border-radius:7px;padding:6px 9px;line-height:1.4}
+.rlw{display:flex;flex-direction:column;gap:9px}
+.rlw-row{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:11px;padding:13px 16px;box-shadow:var(--shadow)}
+.rlw-row.hot{border-left-color:var(--red)}
+.rlw-light{width:11px;height:11px;border-radius:50%;background:var(--amber);flex:none;box-shadow:0 0 0 4px var(--amber-soft)}
+.rlw-row.hot .rlw-light{background:var(--red);box-shadow:0 0 0 4px var(--red-soft);animation:pulse2 1.4s infinite}
+.rlw-main{flex:1;min-width:0}
+.rlw-t{font-size:13.5px;font-weight:700}
+.rlw-s{font-family:var(--mono);font-size:11px;color:var(--text-2);margin-top:3px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.rlw-days{font-family:var(--mono);font-size:19px;font-weight:800;color:var(--red);flex:none;text-align:right;line-height:1}
+.rlw-days.warn{color:var(--amber)}
+.rlw-days small{display:block;font-size:9.5px;font-weight:600;color:var(--text-3);letter-spacing:.03em;margin-top:3px}
+.rlw-rep{font-size:10.5px;font-weight:700;color:var(--teal);background:var(--teal-soft);padding:2px 8px;border-radius:20px;white-space:nowrap}
+.rlw-rep.no{color:var(--text-3);background:var(--panel-2)}
+.dev{display:flex;flex-direction:column;gap:11px}
+.dev-row{display:grid;grid-template-columns:158px 1fr 96px;gap:14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 16px;box-shadow:var(--shadow)}
+.dev-nm{font-size:12.5px;font-weight:700;line-height:1.25}.dev-nm small{display:block;font-family:var(--mono);font-weight:500;color:var(--text-3);font-size:10.5px;margin-top:2px}
+.dev-bars{display:flex;flex-direction:column;gap:5px}
+.dev-b{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10.5px}
+.dev-b .lab{width:64px;color:var(--text-3);flex:none}
+.dev-track{flex:1;height:9px;background:var(--panel-2);border-radius:5px;overflow:hidden}
+.dev-fill{height:100%;border-radius:5px}
+.dev-fill.est{background:var(--text-3)}.dev-fill.ai{background:var(--boss)}.dev-fill.act{background:var(--accent)}
+.dev-b .val{width:42px;text-align:right;color:var(--text-2);font-weight:600;flex:none}
+.dev-dev{text-align:right;font-family:var(--mono)}
+.dev-dev .dd{font-size:17px;font-weight:800;line-height:1}
+.dev-dev .dd.over{color:var(--red)}.dev-dev .dd.under{color:var(--teal)}.dev-dev .dd.ok{color:var(--text-2)}
+.dev-dev .closer{font-size:9.5px;font-weight:700;margin-top:4px}
+.closer.ai{color:var(--boss)}.closer.hu{color:var(--text-2)}
+.dev-legend{display:flex;gap:14px;margin-top:11px;font-family:var(--mono);font-size:10.5px;color:var(--text-3);flex-wrap:wrap}
+.dev-legend span{display:inline-flex;align-items:center;gap:6px}
+.dev-legend i{width:11px;height:9px;border-radius:3px;display:inline-block}
+.asset{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:880px){.asset{grid-template-columns:1fr}}
+.asset-box{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;box-shadow:var(--shadow)}
+.asset-box h4{font-size:11px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.asset-box h4 .ic{color:var(--boss)}
+.asset-zone{display:flex;align-items:center;gap:11px;padding:7px 0}
+.asset-zn{font-family:var(--mono);font-size:21px;font-weight:800;width:30px;text-align:right}
+.asset-zone.ok .asset-zn{color:var(--teal)}.asset-zone.pre .asset-zn{color:var(--accent)}.asset-zone.unk .asset-zn{color:var(--text-3)}
+.asset-zl{font-size:12.5px;color:var(--text-2);font-weight:600}
+.asset-zl small{display:block;font-family:var(--mono);font-size:10px;color:var(--text-3);font-weight:500}
+.fly{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line-2);font-size:12.5px}.fly:last-child{border:none}
+.fly-n{font-family:var(--mono);font-size:11px;color:var(--text-3);font-weight:700;flex:none;width:14px}
+.fly-t{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fly-r{font-family:var(--mono);font-size:11px;color:var(--boss);font-weight:700;flex:none}
+.blank-i{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-2);padding:8px 0;line-height:1.45}
+.blank-i .ic{color:var(--text-3);flex:none;margin-top:1px}
+.blank-i b{color:var(--text)}
+.dq-intro{display:flex;align-items:flex-start;gap:10px;font-size:13px;line-height:1.6;color:var(--text);background:var(--boss-soft);border-radius:11px;padding:14px 16px;margin-bottom:20px;border-left:3px solid var(--boss)}
+.dq-intro .ic{color:var(--boss);flex:none;margin-top:2px}.dq-intro b{color:var(--boss-d)}
+.dq-card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:20px 22px;box-shadow:var(--shadow);margin-bottom:16px}
+.dq-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.dq-id{font-family:var(--mono);font-size:11px;color:var(--text-3);font-weight:700}
+.dq-from{font-family:var(--mono);font-size:11px;color:var(--text-2);background:var(--panel-2);padding:3px 9px;border-radius:20px}
+.dq-fde{margin-left:auto;font-size:10.5px;font-family:var(--mono);font-weight:700;color:var(--teal);background:var(--teal-soft);padding:3px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:5px}
+.dq-t{font-size:16px;font-weight:800;letter-spacing:-.3px;margin-bottom:11px}
+.dq-fact{background:var(--panel-2);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6;margin-bottom:11px}
+.dq-fact .fl{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;display:flex;align-items:center;gap:5px}
+.dq-fdenote{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text-2);margin-bottom:13px;line-height:1.55}
+.dq-fdenote .ic{color:var(--teal);flex:none;margin-top:2px}.dq-fdenote b{color:var(--text)}
+.dq-refs{display:flex;flex-direction:column;gap:7px;margin-bottom:6px}
+.dq-opts{display:flex;gap:9px;flex-wrap:wrap;align-items:center;padding-top:14px;border-top:1px dashed var(--line-2)}
+.dq-conf{font-size:12px;font-weight:700;color:var(--text-3);margin-right:auto;display:inline-flex;align-items:center;gap:6px}
+.dq-conf .ic{color:var(--boss)}
+.dq-opt{font-size:12.5px;font-weight:700;padding:9px 15px;border-radius:9px;border:1.5px solid var(--line);color:var(--text-2);background:var(--panel);transition:.14s}
+.dq-opt:hover{border-color:var(--boss);color:var(--boss)}
+.dq-opt.pri{background:var(--boss);color:#fff;border-color:var(--boss)}.dq-opt.pri:hover{background:var(--boss-d);color:#fff}
+.dq-done{display:flex;align-items:center;gap:9px;padding-top:14px;border-top:1px dashed var(--line-2);font-size:12.5px;color:var(--teal);font-weight:700}
+.dq-done .ic{color:var(--teal)}
+.dq-done .stamp{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text-3);font-weight:500}
+.dq-done .undo{font-family:var(--sans);font-size:11px;color:var(--text-3);font-weight:600;text-decoration:underline;cursor:pointer}
+</style>
+</head>
+<body data-role="embedded">
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">砺</div>
+    <div>研发工作空间<br><small>FORGE · workspace v1</small></div>
+  </div>
+  <nav class="nav">
+    <button class="emp-nav on" data-view="workspace">工作台</button>
+    <button class="emp-nav" data-view="create">创作</button>
+    <button class="emp-nav" data-view="cases">案例库</button>
+    <button class="boss-nav" data-view="cockpit" id="navCockpit">决策驾驶舱</button>
+    <button class="boss-nav" data-view="decisions" id="navDecisions">决策队列</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="sync"><span class="dot"></span><span class="dt">钉钉</span> 已连接 · 本地同步 ✓</div>
+  <button class="iconbtn" id="bell" title="后台风险提醒"><span class="badge"></span></button>
+  <button class="role-pick" id="rolePick">
+    <span class="av" id="navAv">林</span>
+    <span class="rt"><b id="navRole">嵌入式软件工程师</b><span id="navRoleEn">embedded · sw</span></span>
+  </button>
+  <div class="role-menu" id="roleMenu">
+    <h6>切换岗位视角</h6>
+    <button data-role="embedded" class="on"><span class="av" style="background:#2D5BFF">林</span><span class="meta"><b>嵌入式软件工程师</b><span>embedded · sw</span></span></button>
+    <button data-role="pm"><span class="av" style="background:#0E9E6E">陈</span><span class="meta"><b>产品经理</b><span>product · pm</span></span></button>
+    <h6 style="margin-top:4px">决策视角</h6>
+    <button data-role="boss"><span class="av" style="background:#7A3FF2">唐</span><span class="meta"><b>研发总监 · 决策驾驶舱</b><span>director · cockpit</span></span></button>
+    <h6 style="margin-top:4px">更多岗位</h6>
+    <button class="soon" disabled><span class="av">硬</span><span class="meta"><b>硬件工程师</b><span>hardware</span></span><span class="tag-soon">待扩展</span></button>
+    <button class="soon" disabled><span class="av">结</span><span class="meta"><b>结构 / ID</b><span>mech · id</span></span><span class="tag-soon">待扩展</span></button>
+  </div>
+</header>
+
+<!-- ===== WORKSPACE ===== -->
+<section class="view on" id="view-workspace">
+  <div class="workspace">
+    <!-- left rail -->
+    <aside class="col rail-l">
+      <div class="lbl">进行中项目 <span style="font-family:var(--mono)" id="pcount"></span></div>
+      <div id="projList"></div>
+      <div class="lbl" style="margin-top:14px">默认</div>
+      <div id="exploreSlot"></div>
+      <button class="newproj">＋ 新建项目（绑定本地 / 钉钉）</button>
+    </aside>
+    <!-- center -->
+    <main class="col canvas" style="overflow:hidden">
+      <div class="pjhead" id="pjhead"></div>
+      <div class="thread" id="thread"></div>
+      <div class="composer">
+        <div class="insert-row" id="insertRow"></div>
+        <div class="inputwrap">
+          <textarea rows="1" id="ta" placeholder="向项目助手提问，或描述要生成的产出…"></textarea>
+          <button class="send" id="send"></button>
+        </div>
+      </div>
+    </main>
+    <!-- right rail -->
+    <aside class="col rail-r" id="railR"></aside>
+  </div>
+</section>
+
+<!-- ===== CREATE ===== -->
+<section class="view" id="view-create">
+  <div class="page">
+    <div class="page-h">
+      <div class="eyebrow"><span id="ce-ic"></span> 创作 · 探索版</div>
+      <h1>按岗位推荐的能力库</h1>
+      <p>前沿模型、建模与画图能力，按你的岗位推荐。任何一个都能<b>一键插入当前项目对话</b>——例如来了快充研发，直接生成 MVP 电路图回填。这是大家共建的能力库。</p>
+      <div class="actions">
+        <span class="beta">探索版 · 共建中</span>
+        <button class="btn pri">＋ 贡献一个能力</button>
+        <button class="btn ghost">浏览全部模型</button>
+      </div>
+    </div>
+    <div class="grid" id="toolGrid"></div>
+  </div>
+</section>
+
+<!-- ===== CASES ===== -->
+<section class="view" id="view-cases">
+  <div class="page">
+    <div class="page-h">
+      <div class="eyebrow"><span id="cs-ic"></span> 案例库 · 部门资产</div>
+      <h1>解决过的难题，不再踩第二遍</h1>
+      <p>已解决的技术难题与项目经验，结构化沉淀为透明、可复用的部门资产。失败与成功平等收录——失败案例信息密度更高，复用前请看清「约束条件」。</p>
+    </div>
+    <div class="filterbar">
+      <div class="searchbox"><span id="se-ic"></span><input id="caseSearch" placeholder="搜索难题 / 场景 / 技术域…"></div>
+      <button class="fchip on" data-f="all">全部</button>
+      <button class="fchip" data-f="ok">已验证</button>
+      <button class="fchip" data-f="pre">预研</button>
+      <button class="fchip" data-f="unk">技术空白</button>
+      <button class="fchip" data-f="fail">失败案例</button>
+    </div>
+    <div class="cgrid" id="caseGrid"></div>
+  </div>
+</section>
+
+<!-- ===== BOSS · COCKPIT ===== -->
+<section class="view" id="view-cockpit">
+  <div class="ck-page"><div class="ck-wrap" id="cockpit"></div></div>
+</section>
+
+<!-- ===== BOSS · DECISION QUEUE ===== -->
+<section class="view" id="view-decisions">
+  <div class="ck-page"><div class="ck-wrap" id="decisions"></div></div>
+</section>
+
+<!-- ===== AI MEETING ===== -->
+<div class="meeting-overlay" id="meeting">
+  <div class="m-head">
+    <div class="m-title" id="m-title"></div>
+    <button class="m-close" onclick="closeMeeting()">✕ 关闭会议</button>
+  </div>
+  <div class="m-stepper" id="m-stepper"></div>
+  <div class="m-body" id="m-body"></div>
+  <div class="m-foot" id="m-foot"></div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast">
+  <button class="x" id="toastX">✕</button>
+  <div class="th"><span class="ti" id="toast-ic"></span>后台风险提醒 · 已自动上报</div>
+  <p class="tx">蓝牙项目卡点 <b>「接收延迟」</b> 已持续 <b>3 天</b>，超过同类均值 2.4 天。已向项目经理 <b>陈</b> 推送事实，并附 <b>3 条参考方案</b>，等待人工确认。</p>
+  <div class="meta"><span id="toast-ic2"></span>陈述事实 · 不下判断 · 由项目经理确认</div>
+</div>
+
+<script>
+/* ---------------- icons ---------------- */
+const P = {
+  bluetooth:'<path d="m7 7 10 10-5 5V2l5 5L7 17"/>',
+  bolt:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  cpu:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  send:'<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+  sparkles:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8Z"/><path d="M5 19l.7 2 2 .7-2 .7L5 24l-.7-2-2-.7 2-.7Z"/>',
+  plus:'<path d="M5 12h14M12 5v14"/>',
+  search:'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  ret:'<polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>',
+  cube:'<path d="M21 16V8a2 2 0 0 0-1-1.7l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.7l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+  activity:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  alert:'<path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/>',
+  compass:'<circle cx="12" cy="12" r="10"/><polygon points="16.2 7.8 14.1 14.1 7.8 16.2 9.9 9.9"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.7"/>',
+  folder:'<path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.7-.9l-.8-1.2A2 2 0 0 0 7.9 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>',
+  layers:'<path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>',
+  target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  brain:'<path d="M12 5a3 3 0 0 0-6 .5 3 3 0 0 0-1 5.8 3 3 0 0 0 1.5 5 3 3 0 0 0 5.5 1.2Z"/><path d="M12 5a3 3 0 0 1 6 .5 3 3 0 0 1 1 5.8 3 3 0 0 1-1.5 5 3 3 0 0 1-5.5 1.2Z"/>',
+  flow:'<rect x="3" y="3" width="7" height="5" rx="1"/><rect x="14" y="16" width="7" height="5" rx="1"/><path d="M6.5 8v4a2 2 0 0 0 2 2h6a2 2 0 0 1 2 2v.5"/>',
+  scan:'<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M6 21v-1a6 6 0 0 1 12 0v1"/>',
+  mic:'<rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4M8 22h8"/>',
+  chev:'<path d="m9 18 6-6-6-6"/>',
+  gauge:'<path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="m13.5 12.5 3.5-3.5"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/>',
+  trend:'<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  bars:'<path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7" rx="1"/><rect x="12" y="6" width="3" height="11" rx="1"/><rect x="17" y="13" width="3" height="4" rx="1"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>',
+  eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+  gavel:'<path d="m14.5 12.5-8 8a2.12 2.12 0 0 1-3-3l8-8"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/><path d="M3 21h10"/>',
+};
+function ic(n,s=16){return `<svg class="ic" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${P[n]||''}</svg>`}
+
+/* ---------------- data ---------------- */
+const DATA = {
+embedded:{
+  label:'嵌入式软件工程师', en:'embedded · sw', av:'林', avc:'#2D5BFF',
+  projects:[
+    {id:'ble',name:'蓝牙连接功能',icon:'bluetooth',stage:'联调',el:5,lf:2,prog:72,urg:'high'},
+    {id:'fc',name:'快充协议开发',icon:'bolt',stage:'方案选型',el:3,lf:6,prog:40,urg:'mid'},
+    {id:'pmu',name:'电源管理优化',icon:'cpu',stage:'需求分析',el:1,lf:9,prog:15,urg:'low'},
+  ],
+  explore:{id:'explore',name:'自由探索',icon:'compass',stage:'default · 日常与前沿'},
+  insert:[['cpu','MVP 电路图'],['activity','时序图'],['layers','状态机'],['file','代码脚手架'],['scan','数据手册速读'],['cube','3D 模型']],
+  detail:{
+    ble:{
+      goal:'稳定低延迟 BLE 数据回传 (≤30ms)', stage:'联调',
+      decisions:['主控选 Nordic nRF52840','采样率锁定 ≤1kHz','连接间隔暂定 30ms'],
+      blocker:{t:'接收延迟 80ms（目标≤30ms）',days:3,reported:true},
+      outputs:[['file','BLE 联调测试报告.md','云端 ✓ · 计量中'],['scan','接收缓冲方案对比.xlsx','云端 ✓']],
+      todos:[
+        {tag:'卡点',blk:true,t:'蓝牙快截止了，当前卡点「接收延迟」。已为你找到 3 个参考方案 →',cta:'查看方案'},
+        {tag:'日程',t:'下午 5 点与产品部会议，是否直接生成会议前置文档？',cta:'生成文档'},
+      ],
+      chat:[
+        {who:'user',t:'蓝牙接收延迟一直压不到 30ms 以下，有什么思路？'},
+        {who:'ai',fact:'当前实测接收延迟约 80ms，目标 ≤30ms。同类 BLE 项目历史卡点平均 2.4 天，本卡点已 3 天（已自动上报项目经理）。',
+         refs:[
+           ['增大接收缓冲 + 关闭从机自动延迟','案例库 #A-203','ok','已验证'],
+           ['连接间隔下调至 7.5ms','历史项目 · 蓝牙秤-2025','pre','预研'],
+           ['关闭 BLE 重传日志打印','外部 · Nordic DevZone','ext','外部'],
+         ],confirm:'采用哪个方案 / 是否需要我生成调试用例？'}
+      ]
+    },
+    fc:{
+      goal:'PD3.1 快充协议栈打通', stage:'方案选型',
+      decisions:['协议范围锁定 PD3.1 + PPS','暂不支持 QC'],
+      blocker:null,
+      outputs:[['file','PD 协议选型说明.md','云端 ✓']],
+      todos:[
+        {tag:'选型',t:'已收集 3 颗 PD 协议芯片资料，是否生成对比评估表？',cta:'生成对比表'},
+        {tag:'前沿',t:'氮化镓快充最新方案速览（近 30 天）',cta:'查看'},
+      ],
+      chat:[{who:'user',t:'PD3.1 这几颗协议芯片怎么选？'},
+        {who:'ai',fact:'已抓取 3 颗候选芯片的数据手册关键参数（封装 / 功耗 / 外围 / 单价）。历史上同类选型平均耗时 4 天。',
+         refs:[['CYPD3171 外围最简','案例库 #B-118','ok','已验证'],['生成三方对比评估表','创作 · 方案商对比表','pre','工具']],
+         confirm:'是否锁定候选并生成对比评估表？'}]
+    },
+    pmu:{
+      goal:'整机待机功耗下降 30%', stage:'需求分析',
+      decisions:['先做功耗基线测量'],
+      blocker:null,
+      outputs:[],
+      todos:[{tag:'起步',t:'需求刚立项，是否先生成功耗基线测量计划？',cta:'生成计划'},
+        {tag:'学习',t:'怎么用 AI 辅助嵌入式低功耗调优',cta:'查看'}],
+      chat:[{who:'user',t:'电源管理优化从哪下手？'},
+        {who:'ai',fact:'项目处于需求分析阶段，暂无历史基线。同类「功耗优化」项目历史平均周期 10 天。',
+         refs:[['先建功耗基线再定目标','案例库 · 方法','pre','预研']],confirm:'是否生成基线测量计划？'}]
+    },
+    explore:{
+      goal:'不属于具体项目的探索与日常', stage:'自由探索',
+      decisions:['—'], blocker:null, outputs:[],
+      todos:[
+        {tag:'前沿',t:'最新 4G 模块前沿速览（Cat.1 / RedCap 近期动态）',cta:'查看'},
+        {tag:'学习',t:'怎么用 AI 开发嵌入式（工作流 + 工具链）',cta:'开始'},
+        {tag:'日程',t:'下午 5 点与产品部会议，是否直接生成会议前置文档？',cta:'生成文档'},
+      ],
+      chat:[{who:'ai',fact:'这里是自由探索区：日常、前沿学习、会议准备都可以在这里发起。下面是基于你近期项目历史的 3 条可接续待办。',refs:[],confirm:null}]
+    }
+  }
+},
+pm:{
+  label:'产品经理', en:'product · pm', av:'陈', avc:'#0E9E6E',
+  projects:[
+    {id:'gan',name:'快充氮化镓方案商筛选',icon:'bolt',stage:'方案商筛选',el:4,lf:3,prog:55,urg:'high'},
+    {id:'screen',name:'协议芯片屏幕开发',icon:'cpu',stage:'方案商收集',el:6,lf:8,prog:35,urg:'mid'},
+    {id:'xx',name:'XX 方案推进',icon:'layers',stage:'执行',el:7,lf:1,prog:80,urg:'high'},
+  ],
+  explore:{id:'explore',name:'自由探索',icon:'compass',stage:'default · 日常与前沿'},
+  insert:[['file','会议前置文档'],['layers','方案商对比表'],['file','PRD 生成'],['scan','竞品速览'],['flow','流程图'],['cube','3D 模型']],
+  detail:{
+    gan:{
+      goal:'确定快充氮化镓架构方案商', stage:'方案商筛选',
+      decisions:['架构方向：GaN 高频','目标 BOM 成本 ≤ ¥X'],
+      blocker:{t:'氮化镓架构方案商未确定',days:2,reported:false},
+      outputs:[['layers','GaN 方案商初筛表.xlsx','云端 ✓ · 计量中']],
+      todos:[
+        {tag:'决策',t:'快充氮化镓架构方案商还未确定，是否进入筛选评估？',cta:'开始评估'},
+        {tag:'日程',t:'下午的方案商会议，是否生成会议前置文档？',cta:'生成文档'},
+      ],
+      chat:[{who:'user',t:'氮化镓快充方案商怎么筛？'},
+        {who:'ai',fact:'已识别到 4 家候选方案商。历史「方案商筛选」平均耗时 3 天，本项目已 2 天。下方为可调用的评估工具与历史参照。',
+         refs:[['套用方案商评估维度（成本/交期/合作评分）','案例库 #B-118','ok','已验证'],['生成方案商对比表','创作 · 方案商对比表','pre','工具'],['会议前置文档（含待决问题清单）','创作 · 会议前置文档','ext','工具']],
+         confirm:'是否进入筛选评估 / 生成会前文档？'}]
+    },
+    screen:{
+      goal:'协议芯片屏幕方案定型', stage:'方案商收集',
+      decisions:['优先带屏 PD 协议芯片'],
+      blocker:null,
+      outputs:[['scan','屏幕协议芯片候选清单.md','云端 ✓']],
+      todos:[
+        {tag:'评估',t:'协议芯片屏幕开发已收集到 5 家方案商，是否足够开始评估？',cta:'开始评估'},
+        {tag:'前沿',t:'带屏快充协议芯片市场速览',cta:'查看'},
+      ],
+      chat:[{who:'user',t:'屏幕协议芯片的方案商够不够开始评估？'},
+        {who:'ai',fact:'当前已收集 5 家方案商资料。历史经验：同类评估通常 ≥4 家即可启动横向对比。',
+         refs:[['启动横向评估并生成对比表','创作 · 方案商对比表','pre','工具']],confirm:'是否开始评估？'}]
+    },
+    xx:{
+      goal:'XX 方案按期落地', stage:'执行',
+      decisions:['方案 V2 已评审通过'],
+      blocker:{t:'供应商交期回复滞后',days:4,reported:true},
+      outputs:[['file','XX 方案执行周报.md','云端 ✓ · 计量中']],
+      todos:[
+        {tag:'风险',blk:true,t:'当前 XX 方案可能存在延期风险（卡点已 4 天），这里有几条参考解决思路 →',cta:'查看思路'},
+        {tag:'日程',t:'明日里程碑评审，是否生成进度前置材料？',cta:'生成材料'},
+      ],
+      chat:[{who:'user',t:'XX 方案有延期风险，怎么处理？'},
+        {who:'ai',fact:'关键卡点「供应商交期回复滞后」已持续 4 天，距里程碑仅剩 1 天（已自动上报）。同类延期案例 3 条可参考。',
+         refs:[['并行启用备选供应商','案例库 #D-051','pre','预研'],['里程碑拆解 + 范围收敛','案例库 · 项目经验','ok','已验证']],
+         confirm:'是否通知相关部门并生成应对方案？'}]
+    },
+    explore:{
+      goal:'不属于具体项目的探索与日常', stage:'自由探索',
+      decisions:['—'], blocker:null, outputs:[],
+      todos:[
+        {tag:'日程',t:'下午的方案商会议，是否生成会议前置文档？',cta:'生成文档'},
+        {tag:'前沿',t:'本周竞品快充新品速览',cta:'查看'},
+        {tag:'方法',t:'方案商评估维度模板（成本/交期/质量/合作）',cta:'套用'},
+      ],
+      chat:[{who:'ai',fact:'这里是自由探索区：会议准备、竞品跟踪、方法沉淀都可在此发起。下面是基于近期项目的 3 条可接续待办。',refs:[],confirm:null}]
+    }
+  }
+}
+};
+
+/* shared cases (department asset) */
+const CASES = [
+  {id:'A-203',title:'BLE 接收延迟从 80ms 降到 22ms',zone:'ok',res:'succ',
+   scene:'低延迟 BLE 数据回传，联调阶段延迟超标',result:'增大接收缓冲并关闭从机自动延迟后达标',reason:'默认重传 + 日志打印吃满了接收窗口',
+   constraint:'采样率 ≤1kHz、连接间隔 ≥15ms 时成立；高采样场景未验证',owner:'林',proj:'蓝牙连接 / 蓝牙秤-2025',reuse:7,domain:'蓝牙'},
+  {id:'B-118',title:'GaN 快充 EMI 整改一次过认证',zone:'ok',res:'succ',
+   scene:'氮化镓快充样机 EMI 超标',result:'调整开关频率 + 加 RC 吸收后通过',reason:'高频开关辐射 + 布局回路过大',
+   constraint:'仅适用 65W 以内、该 PCB 叠层；更高功率需重评',owner:'陈',proj:'快充协议开发',reuse:4,domain:'快充'},
+  {id:'C-077',title:'协议芯片屏幕量产色差被退货',zone:'ok',res:'fail',
+   scene:'带屏方案量产，屏幕显色与样机不一致',result:'整批退货返工，延期 2 周',reason:'未锁定屏厂 Gamma 曲线 + 未做量产首件比色',
+   constraint:'失败前提：跨批次换屏厂、无比色标准。务必复用此教训',owner:'陈',proj:'协议芯片屏幕开发',reuse:5,domain:'屏幕'},
+  {id:'D-051',title:'OTA 升级失败的安全回滚机制',zone:'pre',res:'succ',
+   scene:'固件 OTA 中断导致变砖风险',result:'双 Bank + 校验失败自动回滚（预研验证通过）',reason:'单分区升级无回退路径',
+   constraint:'需 2×固件分区的 Flash 余量；小容量 MCU 不适用',owner:'林',proj:'电源管理优化',reuse:2,domain:'软件'},
+  {id:'E-空白',title:'双频 Wi-Fi 与 BLE 射频共存',zone:'unk',res:'',
+   scene:'未来项目可能要求 WiFi+BLE 同时高吞吐',result:'',reason:'',
+   constraint:'',owner:'—',proj:'—',reuse:0,domain:'射频',unknown:true},
+];
+
+/* ---------------- boss cockpit data ----------------
+   反推原则：项目/卡点/案例直接聚合自 embedded+pm（同一套数据，老板视角）；
+   仅工期偏差历史、AI 命中率、决策队列为种子数据（员工端 §5 数据缺口）。 */
+const BOSS = { label:'研发总监', en:'director · cockpit', av:'唐', avc:'#7A3FF2' };
+// 已结项项目：负责人估期(est) / AI 估期(ai) / 实际(actual)，单位周（信条 8：双估期同时存档，结果说话）
+const DEVI = [
+  {proj:'蓝牙秤-2025',     type:'蓝牙', owner:'林', oc:'#2D5BFF', est:6, ai:6.5, actual:6},
+  {proj:'PD 快充充电头',    type:'快充', owner:'陈', oc:'#0E9E6E', est:5, ai:5.5, actual:5.5},
+  {proj:'屏幕协议模块 v1',  type:'屏幕', owner:'陈', oc:'#0E9E6E', est:4, ai:7,   actual:8},
+  {proj:'低功耗采集器',     type:'软件', owner:'林', oc:'#2D5BFF', est:8, ai:9,   actual:7},
+  {proj:'OTA 安全升级',     type:'软件', owner:'林', oc:'#2D5BFF', est:3, ai:4,   actual:4},
+];
+// 决策队列：来自各角色 AI 会议、已过 FDE 审理、冒泡到老板拍板的事项
+const DQUEUE = [
+  {id:'DQ-01', from:'嵌入式 · 林', project:'蓝牙连接功能',
+   title:'蓝牙延迟收敛 vs 4G 预研：本期优先级',
+   fact:'蓝牙接收延迟 80ms（目标 ≤30ms），已确认影响整机响应；卡点已持续 3 天，超同类均值（2.4 天）0.6 天。4G 预研时间窗口可挪。同类「阻塞性卡点」历史平均再需约 2 天收敛。',
+   fde:'初判「先收敛蓝牙、4G 顺延 3 天」成立；人力并行冲突属实。',
+   refs:[['先收敛蓝牙、4G 顺延 3 天','AI 会议初判 · 已过 FDE','ok','已审理'],['并行投入有限调研人力试点','历史项目 · 蓝牙秤-2025','pre','预研']],
+   options:['批准初判（蓝牙优先）','驳回 · 4G 优先','暂缓 · 要更多数据']},
+  {id:'DQ-02', from:'产品 · 陈', project:'快充氮化镓方案商筛选',
+   title:'氮化镓方案商是否本周锁定进入打样',
+   fact:'4 家候选方案商成本/交期差距大、合作评分接近；卡关键打样路径，已 2 天未定型。目标 BOM 成本上限待财务确认。同类「方案商筛选」历史均值 3 天。',
+   fde:'初判「本周优先收敛氮化镓、屏幕评估顺延」成立；需拉财务定上限、硬件确认可制造性。',
+   refs:[['本周锁定氮化镓 + 屏幕评估顺延','AI 会议初判 · 已过 FDE','ok','已审理'],['套用成本/交期/合作四维评估','案例库 #B-118','ok','已验证'],['GaN 可制造性 + 散热需硬件确认','历史 · EMI 整改','pre','预研']],
+   options:['批准锁定','再等财务 / 硬件','驳回 · 继续比选']},
+  {id:'DQ-03', from:'系统 · 知识空白聚合', project:'前瞻预研',
+   title:'是否立项「WiFi + BLE 射频共存」预研',
+   fact:'案例库该方向标记为技术空白（未知区，复用价值低）；近期 2 个潜在项目可能要求 WiFi+BLE 同时高吞吐。当前无任何已验证历史数据。',
+   fde:'诚实标注：这是技术空白，无历史数据可依（信条 11）。是否投预研、投多少，由你决定。',
+   refs:[['最接近参照：蓝牙共存调度（部分相关、未验证 WiFi 高吞吐）','案例库 #E-空白','unk','技术空白']],
+   options:['立项预研','暂不投入','指派调研负责人']},
+];
+const DQDONE = {}; // 决策留痕：id -> {opt, time}
+
+// —— 聚合 helper：把两个岗位的数据合成老板视角 ——
+function allProjects(){
+  const pull=r=>DATA[r].projects.map(p=>({...p,owner:DATA[r].av,oc:DATA[r].avc,role:DATA[r].label,det:DATA[r].detail[p.id]}));
+  return [...pull('embedded'),...pull('pm')];
+}
+function allBlockers(){
+  return allProjects().filter(p=>p.det&&p.det.blocker)
+    .map(p=>({proj:p.name,owner:p.owner,oc:p.oc,role:p.role,...p.det.blocker}))
+    .sort((a,b)=>b.days-a.days);
+}
+const AVG_BLK=2.4; // 同类卡点历史均值（天），沿用既有后台监测口径
+function pct(x){return (x>=0?'+':'')+Math.round(x*100)+'%';}
+
+/* ---------------- render ---------------- */
+let role='embedded', cur='ble';
+let CONVO=[];
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const D=()=>DATA[role];
+
+function ring(p,dark){
+  const r=11,c=2*Math.PI*r, off=c*(1-p/100);
+  return `<svg class="ring" width="30" height="30" viewBox="0 0 30 30">
+    <circle cx="15" cy="15" r="${r}" fill="none" stroke="${dark?'#272E3A':'#E7E6DE'}" stroke-width="3"/>
+    <circle cx="15" cy="15" r="${r}" fill="none" stroke="#2D5BFF" stroke-width="3" stroke-linecap="round"
+      stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 15 15)"/>
+    <text x="15" y="18" text-anchor="middle" font-size="8" font-family="var(--mono)" fill="${dark?'#A6ABB8':'#5C616C'}">${p}</text></svg>`;
+}
+
+function renderProjects(){
+  const d=D();
+  $('#pcount').textContent='('+d.projects.length+')';
+  $('#projList').innerHTML=d.projects.map((p,i)=>`
+    <button class="pcard ${p.urg} ${p.id===cur?'on':''} fade" style="animation-delay:${i*60}ms" data-id="${p.id}">
+      <span class="urg"></span>
+      <div class="ptop">
+        <span class="pico">${ic(p.icon,17)}</span>
+        <div style="flex:1;min-width:0">
+          <div class="pname">${p.name}</div>
+          <div class="pstage">${p.stage}</div>
+        </div>
+        ${ring(p.prog,true)}
+      </div>
+      <div class="pmeta">
+        ${ic('clock',13)}
+        <span class="kbd">已进行 ${p.el}d</span>
+        <span class="kbd ${p.lf<=2?'warn':''}">剩 ${p.lf}d</span>
+      </div>
+    </button>`).join('');
+  const e=d.explore;
+  $('#exploreSlot').innerHTML=`
+    <button class="pcard explore-card ${cur==='explore'?'on':''}" data-id="explore">
+      <div class="ptop"><span class="pico">${ic(e.icon,17)}</span>
+        <div style="flex:1"><div class="pname">${e.name}</div><div class="pstage">${e.stage}</div></div></div>
+    </button>`;
+  $$('.pcard').forEach(b=>b.onclick=()=>{cur=b.dataset.id;renderProjects();renderCenter();renderRail();});
+}
+
+function renderCenter(){
+  const d=D(), p=[...d.projects,d.explore].find(x=>x.id===cur), det=d.detail[cur];
+  $('#pjhead').innerHTML=`
+    <span class="h-ico">${ic(p.icon,20)}</span>
+    <div>
+      <h2>${p.name}</h2>
+      <div class="sub">
+        <span class="chip acc">${p.stage}</span>
+        ${p.el!==undefined?`<span class="chip">${ic('clock',12)} 进行 ${p.el}d</span><span class="chip ${p.lf<=2?'warn':''}">剩 ${p.lf}d</span>`:''}
+        <span class="chip ok">${ic('check',12)} 钉钉同步</span>
+      </div>
+    </div>
+    <div class="h-path">${ic('folder',13)} ~/forge/${cur}</div>
+    <button class="ai-meeting-btn" onclick="openMeeting()">${ic('mic',15)} 发起 AI 会议</button>`;
+
+  let html='';
+  if(det.todos&&det.todos.length){
+    html+=`<div class="todostrip"><div class="th">${ic('sparkles',14)} 基于项目历史，你可以接着做</div><div class="todo-row">`+
+      det.todos.map(t=>`<button class="todo ${t.blk?'blk':''}">
+        <span class="tt">${ic(t.blk?'alert':'compass',12)} ${t.tag}</span>
+        <p>${t.t}</p>
+        ${t.cta?`<span class="go">${t.cta} ${ic('ret',13)}</span>`:''}</button>`).join('')+`</div></div>`;
+  }
+  det.chat.forEach(m=>{
+    if(m.who==='user'){
+      html+=`<div class="msg user"><span class="who">${d.av}</span><div class="body">
+        <div class="nm">我 <span class="role-mark">${d.en}</span></div>
+        <div class="txt">${m.t}</div></div></div>`;
+    }else{
+      let inner=`<div class="txt">${m.t||''}</div>`;
+      if(m.fact)inner+=`<div class="fact"><div class="flbl">${ic('shield',11)} 事实 · 无判断</div>${m.fact}</div>`;
+      if(m.refs&&m.refs.length)inner+=`<div class="refs"><div class="rlbl">参考方案（标注来源 · 不替你决定）</div>`+
+        m.refs.map((r,i)=>`<div class="ref"><span class="n">${i+1}</span><div class="rmain">
+          <div class="rtitle">${r[0]}</div>
+          <div class="src">来源：${r[1]} <span class="zone ${r[2]}">${r[3]}</span></div></div></div>`).join('')+`</div>`;
+      if(m.confirm)inner+=`<div class="confirm-bar">${ic('alert',15)}<div><b>由 ${d.label} 确认</b> · ${m.confirm}</div>
+        <div class="btns"><button>稍后</button><button class="pri">确认并继续</button></div></div>`;
+      html+=`<div class="msg ai"><span class="who">${ic('sparkles',16)}</span><div class="body">
+        <div class="nm">项目助手 <span class="role-mark">memory · 已读取项目上下文</span></div>${inner}</div></div>`;
+    }
+  });
+  html+=`<div id="liveThread"></div>`;
+  $('#thread').innerHTML=html;
+  CONVO=[];
+  $('#insertRow').innerHTML=`<span class="ilbl">快速插入：</span>`+
+    d.insert.map(x=>`<button class="ins">${ic(x[0],14)} ${x[1]}</button>`).join('')+
+    `<span class="mimo-badge">${ic('sparkles',12)} 已接入 MiMo</span>`;
+}
+
+function renderRail(){
+  const d=D(), det=d.detail[cur];
+  let html=`<section><div class="sh">${ic('target',13)} 项目记忆</div><div class="mem">
+    <div class="row"><span class="k">目标</span><span class="v">${det.goal}</span></div>
+    <div class="row"><span class="k">阶段</span><span class="v">${det.stage}</span></div></div>
+    <div style="margin-top:8px"><div class="sh" style="margin:12px 0 7px">${ic('check',13)} 关键决策（留痕）</div>
+    <ul class="declist">${det.decisions.map(x=>`<li>${x}</li>`).join('')}</ul></div></section>`;
+  if(det.blocker){
+    html+=`<section><div class="sh">${ic('alert',13)} 当前卡点</div>
+      <div class="blocker"><div class="bt">${ic('alert',14)} ${det.blocker.t}</div>
+      <div class="bd">已持续 ${det.blocker.days} 天 · 触发后台监测</div>
+      ${det.blocker.reported?`<div class="rep">${ic('check',12)} 已自动上报项目经理 + 附参考方案</div>`:`<div class="bd" style="color:var(--text-3)">未达上报阈值</div>`}</div></section>`;
+  }
+  html+=`<section><div class="sh">${ic('layers',13)} 产出（自动提交云端）</div>`+
+    (det.outputs.length?det.outputs.map(o=>`<div class="out"><span class="oi">${ic(o[0],15)}</span>
+      <div><div class="on-n">${o[1]}</div><div class="os">${o[2]}</div></div></div>`).join('')
+     :`<div class="os" style="color:var(--text-3);font-family:var(--mono);font-size:11px">暂无产出 · 完成后自动沉淀</div>`)+`</section>`;
+  $('#railR').innerHTML=html;
+}
+
+function renderCreate(){
+  const d=D();
+  $('#toolGrid').innerHTML=d.insert.map((x,i)=>`<button class="tool fade" style="animation-delay:${i*50}ms">
+    <span class="ti">${ic(x[0],22)}</span><h3>${x[1]}</h3>
+    <p>${createDesc(x[1])}</p>
+    <span class="insertbtn">${ic('plus',14)} 插入当前项目</span></button>`).join('');
+}
+function createDesc(n){const m={
+  'MVP 电路图':'输入需求场景，一键生成可迭代的原理图草案','时序图':'描述协议交互，自动绘制时序图',
+  '状态机':'把流程描述转成状态机图与骨架代码','代码脚手架':'按外设/协议生成驱动初始化骨架',
+  '数据手册速读':'上传 datasheet，提取关键参数与引脚','3D 模型':'文字 / 草图生成 3D 预览图',
+  '会议前置文档':'读取日程与项目历史，生成会前材料与待决清单','方案商对比表':'多家方案商按成本/交期/质量横向对比',
+  'PRD 生成':'从需求要点生成结构化 PRD 草稿','竞品速览':'抓取近期竞品动态并结构化摘要','流程图':'把业务描述转成清晰流程图',
+};return m[n]||'探索版能力 · 共建中'}
+
+function renderCases(f='all',q=''){
+  q=q.trim();
+  const list=CASES.filter(c=>{
+    if(f==='ok'&&c.zone!=='ok')return false;
+    if(f==='pre'&&c.zone!=='pre')return false;
+    if(f==='unk'&&!c.unknown)return false;
+    if(f==='fail'&&c.res!=='fail')return false;
+    if(q&&!(c.title+c.scene+c.domain+c.reason).includes(q))return false;
+    return true;
+  });
+  $('#caseGrid').innerHTML=list.map((c,i)=>{
+    const zb={ok:'<span class="badge b-ok">已验证</span>',pre:'<span class="badge b-pre">预研</span>',unk:'<span class="badge b-unk">技术空白</span>'}[c.zone];
+    const rb=c.res==='succ'?'<span class="badge b-succ">成功</span>':c.res==='fail'?'<span class="badge b-fail">失败 · 高价值</span>':'';
+    if(c.unknown)return `<div class="case fade" style="animation-delay:${i*40}ms">
+      <div class="chead"><span class="cid">#${c.id}</span>${zb}</div><h3>${c.title}</h3>
+      <div class="unk-note">${ic('alert',13)} 诚实标注：该方向<b>暂无可复用历史</b>。这是技术空白区——下方仅给最接近的参照，复用价值低，建议立预研。</div>
+      <div class="kv"><span class="kk">最接近</span><span class="vv">蓝牙共存调度（部分相关，未验证 WiFi 高吞吐）</span></div>
+      <div class="cfoot"><span class="owner"><span class="oav">＋</span>认领为预研</span><span class="reuse">复用 0</span></div></div>`;
+    return `<div class="case fade" style="animation-delay:${i*40}ms">
+      <div class="chead"><span class="cid">#${c.id}</span>${zb}${rb}<span class="cid" style="margin-left:auto">${c.domain}</span></div>
+      <h3>${c.title}</h3>
+      <div class="kv"><span class="kk">场景</span><span class="vv">${c.scene}</span></div>
+      <div class="kv"><span class="kk">结果</span><span class="vv">${c.result}</span></div>
+      <div class="kv"><span class="kk">原因</span><span class="vv">${c.reason}</span></div>
+      <div class="constraint"><div class="cl">⚠ 约束条件（复用前必看）</div>${c.constraint}</div>
+      <div class="cfoot"><span class="owner"><span class="oav">${c.owner}</span>${c.owner}</span>
+        <span>${c.proj}</span><span class="reuse">复用 ${c.reuse}</span></div></div>`;
+  }).join('')||`<div style="color:var(--text-3);font-family:var(--mono);padding:20px">无匹配案例</div>`;
+}
+
+/* ---------------- boss cockpit render ---------------- */
+function kpiTile(o){
+  return `<div class="kpi ${o.cls||''} ${o.go?'click':''}" ${o.go?`onclick="gotoView('${o.go}')"`:''}>
+    <span class="ki">${ic(o.icon,16)}</span>
+    <div class="kn">${o.num}</div><div class="kl">${o.label}</div><div class="ks">${o.sub}</div></div>`;
+}
+function renderCockpit(){
+  const projs=allProjects(), blks=allBlockers();
+  const within=(a,b)=>Math.abs(a-b)/b<=0.15;
+  const avgDev=DEVI.reduce((s,d)=>s+(d.actual-d.est)/d.est,0)/DEVI.length;
+  const delayRate=DEVI.filter(d=>d.actual>d.est*1.05).length/DEVI.length;
+  const aiHit=DEVI.filter(d=>within(d.ai,d.actual)).length/DEVI.length;
+  const huHit=DEVI.filter(d=>within(d.est,d.actual)).length/DEVI.length;
+  const pending=DQUEUE.filter(q=>!DQDONE[q.id]).length, hot=blks[0];
+
+  let h=`<div class="ck-head">
+    <div class="eyebrow">${ic('gauge',14)} 决策驾驶舱 · 同一套数据，老板视角</div>
+    <h1>研发全景 · 用事实做决策</h1>
+    <p>这里没有一个数字是研发额外填的——全部<b>反推自员工端工作时沉淀的数据</b>。AI 只摆事实与历史对比，<b>拍板权在你</b>；每个 AI 估值都挂着它的历史命中率，供你决定信几分。</p></div>`;
+
+  h+=`<div class="kpis">
+    ${kpiTile({icon:'layers',num:projs.length,label:'在研项目',sub:`${DATA.embedded.projects.length} 嵌入式 · ${DATA.pm.projects.length} 产品`})}
+    ${kpiTile({icon:'alert',cls:hot?'danger':'',num:blks.length,label:'红灯卡点',sub:hot?`最久「${hot.proj}」已 ${hot.days}d`:'当前无卡点'})}
+    ${kpiTile({icon:'trend',num:pct(avgDev),label:'平均工期偏差',sub:`延期率 ${Math.round(delayRate*100)}% · 估期偏乐观`})}
+    ${kpiTile({icon:'flag',cls:'act',num:pending,label:'待你拍板',sub:'已过 FDE 审理 · 点击进入',go:'decisions'})}
+    ${kpiTile({icon:'eye',num:Math.round(aiHit*100)+'<small>%</small>',label:'AI 估期命中率',sub:`人估命中 ${Math.round(huHit*100)}% · ±15% 口径`})}
+  </div>`;
+
+  // 项目全景
+  h+=`<div class="ck-sec"><div class="ck-sh">${ic('layers',15)} 项目全景<span class="ck-cnt">· ${projs.length} 个在研</span><span class="ck-fact">${ic('shield',11)} 事实聚合 · 无判断</span></div>
+    <div class="pano">`+projs.map(p=>`
+      <div class="pano-c ${p.urg}"><span class="pu"></span>
+        <div class="pano-top"><span class="pano-ico">${ic(p.icon,17)}</span>
+          <div style="flex:1;min-width:0"><div class="pano-nm">${p.name}</div><div class="pano-st">${p.role} · ${p.stage}</div></div>
+          ${ring(p.prog,false)}</div>
+        <div class="pano-meta"><span class="pano-owner"><span class="pano-oav" style="background:${p.oc}">${p.owner}</span>${p.owner}</span>
+          <span>已 ${p.el}d</span><span>·</span><span>剩 ${p.lf}d</span></div>
+        ${p.det&&p.det.blocker?`<div class="pano-blk">${ic('alert',12)} 卡点：${p.det.blocker.t}（${p.det.blocker.days}d）</div>`:''}
+      </div>`).join('')+`</div></div>`;
+
+  // 卡点红灯墙
+  h+=`<div class="ck-sec"><div class="ck-sh">${ic('alert',15)} 卡点红灯墙<span class="ck-cnt">· 按持续时长排序</span><span class="ck-fact">${ic('shield',11)} 陈述事实 · 不评高低风险</span></div>`;
+  h+=blks.length?`<div class="rlw">`+blks.map(b=>{
+    const over=(b.days-AVG_BLK), hotb=b.days>=3;
+    return `<div class="rlw-row ${hotb?'hot':''}"><span class="rlw-light"></span>
+      <div class="rlw-main"><div class="rlw-t">${b.proj} · ${b.t}</div>
+        <div class="rlw-s"><span class="pano-owner"><span class="pano-oav" style="width:16px;height:16px;font-size:9px;background:${b.oc}">${b.owner}</span>${b.owner}</span>
+          <span>${b.role}</span><span>超同类均值 ${over.toFixed(1)}d（均值 ${AVG_BLK}d）</span>
+          <span class="rlw-rep ${b.reported?'':'no'}">${b.reported?'✓ 已自动上报 + 附参考方案':'未达上报阈值'}</span></div></div>
+      <div class="rlw-days ${hotb?'':'warn'}">${b.days}<small>天</small></div></div>`;
+  }).join('')+`</div>`:`<div class="blank-i">${ic('check',13)} 当前没有触发监测阈值的卡点。</div>`;
+  h+=`</div>`;
+
+  // 工期偏差仪表盘
+  const maxW=Math.max(...DEVI.flatMap(d=>[d.est,d.ai,d.actual]));
+  const bar=(v,c,lab)=>`<div class="dev-b"><span class="lab">${lab}</span><div class="dev-track"><div class="dev-fill ${c}" style="width:${Math.round(v/maxW*100)}%"></div></div><span class="val">${v}w</span></div>`;
+  h+=`<div class="ck-sec"><div class="ck-sh">${ic('trend',15)} 工期偏差仪表盘<span class="ck-cnt">· 估期 vs 实际</span><span class="ck-fact">${ic('eye',11)} AI 命中 ${Math.round(aiHit*100)}% · 人估 ${Math.round(huHit*100)}%</span></div>
+    <div class="dev">`+DEVI.map(d=>{
+      const dev=(d.actual-d.est)/d.est, cls=dev>0.05?'over':dev<-0.05?'under':'ok';
+      const aiClose=Math.abs(d.ai-d.actual)<=Math.abs(d.est-d.actual);
+      return `<div class="dev-row"><div class="dev-nm">${d.proj}<small>${d.type} · ${d.owner}</small></div>
+        <div class="dev-bars">${bar(d.est,'est','负责人估')}${bar(d.ai,'ai','AI 估')}${bar(d.actual,'act','实际')}</div>
+        <div class="dev-dev"><div class="dd ${cls}">${pct(dev)}</div><div class="closer ${aiClose?'ai':'hu'}">${aiClose?'AI 更准':'人估更准'}</div></div></div>`;
+    }).join('')+`</div>
+    <div class="dev-legend"><span><i style="background:var(--text-3)"></i>负责人估</span><span><i style="background:var(--boss)"></i>AI 估</span><span><i style="background:var(--accent)"></i>实际</span>
+      <span style="margin-left:auto">偏差 =（实际−负责人估）/负责人估 · 红=超期 绿=提前</span></div></div>`;
+
+  // 知识资产盘点
+  const okC=CASES.filter(c=>c.zone==='ok').length, preC=CASES.filter(c=>c.zone==='pre').length, unkC=CASES.filter(c=>c.unknown).length;
+  const fly=[...CASES].filter(c=>!c.unknown).sort((a,b)=>b.reuse-a.reuse).slice(0,4);
+  const blanks=CASES.filter(c=>c.unknown);
+  h+=`<div class="ck-sec"><div class="ck-sh">${ic('bars',15)} 知识资产盘点<span class="ck-cnt">· 部门资产飞轮</span><span class="ck-fact">${ic('shield',11)} 直接读案例库 · 无新增录入</span></div>
+    <div class="asset">
+      <div class="asset-box"><h4>${ic('layers',12)} 资产存量（三区）</h4>
+        <div class="asset-zone ok"><span class="asset-zn">${okC}</span><span class="asset-zl">已验证<small>可直接复用</small></span></div>
+        <div class="asset-zone pre"><span class="asset-zn">${preC}</span><span class="asset-zl">预研<small>试过未量产</small></span></div>
+        <div class="asset-zone unk"><span class="asset-zn">${unkC}</span><span class="asset-zl">技术空白<small>诚实标注 · 待投入</small></span></div></div>
+      <div class="asset-box"><h4>${ic('trend',12)} 复用飞轮 Top</h4>
+        ${fly.map((c,i)=>`<div class="fly"><span class="fly-n">${i+1}</span><span class="fly-t">${c.title}</span><span class="fly-r">复用 ${c.reuse}</span></div>`).join('')}</div>
+      <div class="asset-box"><h4>${ic('compass',12)} 技术空白地图</h4>
+        ${blanks.map(c=>`<div class="blank-i">${ic('alert',13)}<div><b>${c.domain}</b> — ${c.title}。该方向无历史，<b>复用价值低</b>，建议立预研。</div></div>`).join('')||`<div class="blank-i">${ic('check',13)} 暂无标记的技术空白。</div>`}
+        <div class="blank-i" style="border-top:1px dashed var(--line-2);margin-top:6px;padding-top:10px">${ic('flag',13)}<div>空白聚合已生成 1 条预研立项建议 → 见<b>决策队列 DQ-03</b>。</div></div></div>
+    </div></div>`;
+
+  h+=`<div class="dq-intro">${ic('shield',16)}<div><b>驾驶舱红线：</b>以上每一块都是「可对比的历史事实 + 三区诚实标注」，没有一处替你下结论。需要拍板的事项统一进 <b>决策队列</b>，每条决策都会记下决策人、时间与当时所见数据快照（可追溯）。</div></div>`;
+  $('#cockpit').innerHTML=h;
+}
+
+function renderDecisions(){
+  const pending=DQUEUE.filter(q=>!DQDONE[q.id]).length;
+  let h=`<div class="ck-head"><div class="eyebrow">${ic('gavel',14)} 决策队列 · 人确认门</div>
+    <h1>待你拍板 <span style="color:var(--text-3);font-weight:700">· ${pending}/${DQUEUE.length}</span></h1>
+    <p>这些事项都已经过<b>员工端 AI 会议拆解 + FDE 工程师审理</b>这道人确认门，才冒泡到你这里。AI 给的是事实与初判，<b>最终结论由你签字</b>，并自动留痕。</p></div>
+    <div class="dq-intro">${ic('alert',16)}<div>AI 会议只做<b>记录 + 结构化拆解 + 规则初判</b>；优先级与风险的最终决策权在你（信条 5/6）。下面每条都标了来源、已过审理、三区参考。</div></div>`;
+  h+=DQUEUE.map(q=>{
+    const done=DQDONE[q.id];
+    const refs=q.refs.map((r,i)=>`<div class="ref"><span class="n">${i+1}</span><div class="rmain"><div class="rtitle">${r[0]}</div><div class="src">来源：${r[1]} <span class="zone ${r[2]}">${r[3]}</span></div></div></div>`).join('');
+    const foot=done
+      ?`<div class="dq-done">${ic('check',15)} 已确认：${done.opt}<span class="stamp">研发总监 唐 · ${done.time}（已存数据快照）</span><span class="undo" onclick="undoDecision('${q.id}')">撤销</span></div>`
+      :`<div class="dq-opts"><span class="dq-conf">${ic('user',13)} 由研发总监确认</span>`+q.options.map((o,i)=>`<button class="dq-opt ${i===0?'pri':''}" onclick="confirmDecision('${q.id}',${i})">${o}</button>`).join('')+`</div>`;
+    return `<div class="dq-card">
+      <div class="dq-top"><span class="dq-id">#${q.id}</span><span class="dq-from">${q.from}</span><span class="dq-from">${q.project}</span>
+        <span class="dq-fde">${ic('shield',11)} 已过 FDE 审理</span></div>
+      <div class="dq-t">${q.title}</div>
+      <div class="dq-fact"><div class="fl">${ic('shield',11)} 事实 · 无判断</div>${q.fact}</div>
+      <div class="dq-fdenote">${ic('check',13)}<div><b>FDE 审理意见：</b>${q.fde}</div></div>
+      <div class="dq-refs">${refs}</div>${foot}</div>`;
+  }).join('');
+  $('#decisions').innerHTML=h;
+}
+function confirmDecision(id,i){
+  const q=DQUEUE.find(x=>x.id===id);
+  DQDONE[id]={opt:q.options[i],time:new Date().toLocaleString('zh-CN',{hour12:false})};
+  renderDecisions();renderCockpit();
+}
+function undoDecision(id){delete DQDONE[id];renderDecisions();renderCockpit();}
+function setActiveView(v){
+  $$('.nav button').forEach(x=>x.classList.toggle('on',x.dataset.view===v));
+  $$('.view').forEach(s=>s.classList.toggle('on',s.id==='view-'+v));
+}
+function gotoView(v){setActiveView(v);}
+
+/* ---------------- AI meeting ---------------- */
+let mstep=0;
+let mmode='solo';
+const MSTEPS=['会议设置','AI 主持 · 对话','AI 拆解','FDE 审理','透传分发'];
+const MEETINGS={
+embedded:{
+  topic:'蓝牙接收延迟 & 下阶段优先级对齐', project:'蓝牙连接功能',
+  agenda:'蓝牙接收功能已完成，但接收延迟偏高（约 80ms，目标 ≤30ms），可能影响整机响应。同时下周需启动 4G 模块预研。两项并行的优先级如何排？',
+  parts:[['林','发起人（我）','#2D5BFF'],['F','FDE 审理 · 会后','#15181E'],['陈','干系人 · 异步知会','#0E9E6E']],
+  outline:[['现状澄清','接收延迟当前值 / 目标值？已尝试哪些方案？'],['影响范围','延迟会导致哪些具体问题？影响哪些功能或客户场景？'],['资源冲突','4G 模块预研的时间窗口？两项并行的人力够吗？'],['决策点','先收敛蓝牙延迟，还是并行启动 4G 预研？'],['外部依赖','是否需要射频 / 硬件同事支持？']],
+  dialogue:[
+    {who:'ai',t:'我们开始吧。你提到蓝牙接收延迟偏高、还要并行 4G 预研——我先弄清现状，再聊优先级。先说延迟：现在实测多少、目标多少？'},
+    {who:'you',t:'实测大概 80ms，目标是 30ms。'},
+    {who:'ai',t:'差得不少。你定位过是哪一段吗——接收缓冲、重传、还是日志打印？'},
+    {who:'you',t:'怀疑是接收缓冲和重传日志，但还没确认。'},
+    {who:'ai',t:'那这块更像你能自己往下查的。换个角度——这 80ms 目前会实际影响到什么？整机响应，还是某个客户场景？'},
+    {who:'you',t:'会影响整机响应，按键到反馈有明显卡顿。'},
+    {who:'ai',t:'明白，那它就不只是个指标问题了。再聊并行：4G 预研的时间窗口是死的吗？蓝牙这周要收敛的话，4G 能往后挪几天吗？'},
+    {who:'you',t:'4G 不算特别急，但下周想启动，担心两个一起顾不过来。'},
+    {who:'ai',t:'清楚了。最后一个——蓝牙要不要别人配合，比如射频确认天线匹配？'},
+    {who:'you',t:'可能需要射频帮忙看下天线。'},
+    {who:'ai',t:'好，我大概理清了：延迟你能自己查、但因为影响整机所以优先级不低；4G 可挪；需要射频协助。我来把这些拆解一下，你看看对不对。'}
+  ],
+  self:['增大接收缓冲 + 关闭重传日志打印（参考案例库 #A-203）','重新测延迟基线并出对比数据'],
+  ext:['请射频 / 硬件同事确认天线匹配是否影响延迟','请产品经理确认 4G 预研的时间窗口与人力'],
+  risks:[['接收延迟 80ms 超目标','可能影响整机响应；卡点已持续 3 天'],['蓝牙收敛与 4G 预研并行','人力冲突，可能两边都延期']],
+  rule:'规则：进行中项目的「阻塞性卡点」优先级 &gt; 新「预研」任务。初判：先收敛蓝牙延迟，4G 预研顺延 3 天或仅投入有限调研人力。',
+  dist:[['林（我）','2 项可自行解决 → 已进我的待办','透传'],['射频 / 硬件同事','协助请求：天线匹配确认','通知'],['产品经理 陈','优先级决策 + 4G 时间窗口确认','通知'],['项目经理','风险点 2 条 → 录入项目记忆 + 告知','干系人']],
+  reviewItems:['4G 模块预研的正式排期需在下次需求评审确认','蓝牙延迟收敛后的回归测试范围是否需要扩大']
+},
+pm:{
+  topic:'快充氮化镓方案商决策 & 需求评审前置', project:'快充氮化镓方案商筛选',
+  agenda:'氮化镓快充架构已识别 4 家方案商但未定型；同时协议芯片屏幕开发在并行推进。需对齐方案商决策口径，并为下次需求评审前置事项。',
+  parts:[['陈','发起人（我）','#0E9E6E'],['F','FDE 审理 · 会后','#15181E'],['林','干系人 · 异步知会','#2D5BFF']],
+  outline:[['现状澄清','4 家方案商各自的成本 / 交期 / 合作评分？'],['决策标准','定型的硬指标是什么？BOM 成本上限？'],['资源冲突','氮化镓与屏幕开发并行，评估人力够吗？'],['决策点','是否本周锁定方案商进入打样？'],['外部依赖','是否需要硬件确认 GaN 架构可制造性？']],
+  dialogue:[
+    {who:'ai',t:'开始吧。你说氮化镓 4 家方案商定不下来、屏幕开发又在并行——我先理现状再聊决策。先问：4 家在成本、交期、合作评分上，差距主要在哪？'},
+    {who:'you',t:'成本和交期差得比较多，合作评分接近。'},
+    {who:'ai',t:'那定型的硬指标是什么——优先压成本，还是保交期？有没有 BOM 成本上限？'},
+    {who:'you',t:'有个目标 BOM 上限，但还得财务确认。'},
+    {who:'ai',t:'好，那这条得拉财务。再说并行：氮化镓和屏幕开发同时评估，你精力够吗？哪个更卡打样的关键路径？'},
+    {who:'you',t:'氮化镓更卡打样，屏幕可以稍后。'},
+    {who:'ai',t:'清楚。氮化镓架构这边要不要硬件先确认可制造性和散热？'},
+    {who:'you',t:'需要，硬件得看下 GaN 散热。'},
+    {who:'ai',t:'我理清了：氮化镓卡关键路径要先收敛，需拉财务定成本上限、硬件确认可制造性；屏幕评估可顺延。我来拆解一下你看看。'}
+  ],
+  self:['按「成本 / 交期 / 质量 / 合作」四维生成方案商对比表','整理 4 家报价与交期清单'],
+  ext:['请硬件确认 GaN 架构的可制造性与散热风险','请财务确认目标 BOM 成本上限'],
+  risks:[['方案商迟迟未定型','可能拖累打样排期，已持续 2 天'],['氮化镓与屏幕开发并行评估','产品精力冲突，决策质量下降']],
+  rule:'规则：影响打样关键路径的「方案商定型」优先级 &gt; 非阻塞的并行评估。初判：本周优先收敛氮化镓方案商，屏幕开发评估顺延或拆给协办。',
+  dist:[['陈（我）','2 项可自行解决 → 已进我的待办','透传'],['硬件同事','GaN 可制造性确认','通知'],['财务','目标 BOM 成本上限确认','通知'],['项目经理','方案商定型风险 → 告知 + 录入','干系人']],
+  reviewItems:['氮化镓方案商最终定型需在需求评审过会','屏幕开发评估的协办人力安排']
+}
+};
+function openMeeting(){mstep=0;mmode='solo';document.querySelector('#meeting').classList.add('open');renderMeeting();}
+function closeMeeting(){document.querySelector('#meeting').classList.remove('open');}
+function gotoStep(i){if(i<0||i>4)return;mstep=i;renderMeeting();document.querySelector('#m-body').scrollTop=0;}
+function setMeetMode(m){mmode=m;renderMeeting();}
+function renderMeeting(){
+  const m=MEETINGS[role]||MEETINGS.embedded;
+  document.querySelector('#m-title').innerHTML=`${ic('mic',20)} AI 会议 <span class="mp">${m.project} · ${mmode==='solo'?'单人会议 · 无需约时间':'多人会议'}</span>`;
+  document.querySelector('#m-stepper').innerHTML=MSTEPS.map((s,i)=>`<button class="m-step ${i===mstep?'on':''} ${i<mstep?'done':''}" onclick="gotoStep(${i})"><span class="m-sn">${i<mstep?ic('check',12):(i+1)}</span>${s}</button>${i<5?'<span class="m-sep"></span>':''}`).join('');
+  let b='';
+  if(mstep===0){
+    const solo=mmode==='solo';
+    b=`<div class="m-modebar">
+      <div class="m-modes">
+        <button class="m-mode ${solo?'on':''}" onclick="setMeetMode('solo')">${ic('user',13)} 单人会议 <span class="m-rec-tag">无需约时间</span></button>
+        <button class="m-mode ${solo?'':'on'}" onclick="setMeetMode('multi')">${ic('users',13)} 多人会议 <span class="m-mode-sub">实时 · 需协调</span></button>
+      </div>
+      <span class="m-feat">${ic('sparkles',12)} 产品特色</span>
+    </div>
+    ${solo?`<div class="m-solo">${ic('sparkles',14)}<div><b>一个人也能开会。</b>不必预约他人时间、不必凑日程——自己把问题对着 AI 讲清楚即可。AI 当对手方帮你澄清、拆解、初判；结论与待办会后<b>异步透传</b>给干系人，他们无需到场。</div></div>`:`<div class="m-solo">${ic('users',14)}<div><b>多人实时会议。</b>需协调各方时间到场；AI 同样实时记录、拆解、分发。单人会议（无需约时间）是本产品更推荐的默认方式。</div></div>`}
+    <div class="m-card">
+      <div class="m-field"><label>会议主题</label><div class="m-input">${m.topic}</div></div>
+      <div class="m-field"><label>关联项目</label><div><span class="chip acc">${ic('folder',12)} ${m.project}</span></div></div>
+      <div class="m-field"><label>大概内容 / 议题（你来填）</label><div class="m-textarea">${m.agenda}</div></div>
+      <div class="m-field"><label>${solo?'干系人 · 结果异步透传（无需到场）':'参与人 · 需到场'}</label><div class="m-parts">${m.parts.map(p=>`<span class="m-part"><span class="m-av" style="background:${p[2]}">${p[0]}</span>${p[1]}</span>`).join('')}</div></div>
+      <div class="m-hint">${ic('sparkles',13)}<div>填好"大概内容"，AI 会据此生成一份<b>问答脉络</b>供讨论——只是思路框架，不替你下结论。</div></div>
+    </div>`;
+  }else if(mstep===1){
+    b=`<div class="m-tag">${ic('sparkles',13)} AI 主持 · 对话式，按你的回答临场追问</div>
+    <div class="m-meet">
+      <div class="m-chat">${m.dialogue.map(d=>`<div class="m-turn ${d.who}"><span class="m-tav">${d.who==='ai'?ic('sparkles',15):'你'}</span><div class="m-bwrap"><div class="m-nm">${d.who==='ai'?'AI · 主持':'你 · 语音'}</div><div class="m-bub">${d.t}</div></div></div>`).join('')}
+        <div class="m-voicebar"><span class="m-vmic">${ic('mic',16)}</span><div class="m-wave sm">${Array.from({length:18},(_,i)=>`<span style="animation-delay:${(i%9)*100}ms"></span>`).join('')}</div><span class="m-vtext">AI 正在主持本场会议 · 按住说话回应</span></div>
+      </div>
+      <aside class="m-agenda">
+        <div class="m-arh">${ic('layers',13)} 议题脉络</div>
+        ${m.outline.map((o,i)=>`<div class="m-aitem ${i<4?'done':'now'}"><span class="m-adot">${i<4?ic('check',11):''}</span>${o[0]}</div>`).join('')}
+        <div class="m-anote">这是 AI 临场把控的提纲——它按你的回答追问、转场，不是让你对着清单逐条作答。</div>
+      </aside>
+    </div>`;
+  }else if(mstep===2){
+    b=`<div class="m-tag">${ic('layers',13)} AI 拆解 · 结构化，不下最终结论</div>
+    <div class="m-cols">
+      <div class="m-col self"><div class="m-ch">${ic('check',14)} 可自行解决</div>${m.self.map(x=>`<div class="m-li">${x}</div>`).join('')}</div>
+      <div class="m-col ext"><div class="m-ch">${ic('users',14)} 需外部协助</div>${m.ext.map(x=>`<div class="m-li">${x}</div>`).join('')}</div>
+      <div class="m-col risk"><div class="m-ch">${ic('alert',14)} 风险点</div>${m.risks.map(x=>`<div class="m-li"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
+    </div>
+    <div class="m-rule"><div class="m-rh">${ic('target',14)} 优先级 · 初步规则判断 <span class="m-pending">待 FDE 审理</span></div>${m.rule}</div>`;
+  }else if(mstep===3){
+    b=`<div class="m-review">
+      <div class="m-rstatus"><span class="m-rdot"></span>FDE 工程师审理中 · 人确认门</div>
+      <div class="m-rnote">${ic('shield',14)}<div>AI 只做结构化拆解与<b>初步规则判断</b>。必须经 FDE 工程师审理（人确认、人担责）后，才向项目人员透传分发——把"自动化"挡在判断之外。</div></div>
+      <div class="m-rlist">
+        <div class="m-rrow">拆解结果（可解决 / 需协助 / 风险）<span class="m-ok">${ic('check',12)} 已审阅</span></div>
+        <div class="m-rrow">优先级初步规则判断 <span class="m-ok">${ic('check',12)} 通过</span></div>
+        <div class="m-rrow">外部协助请求 <span class="m-edit">微调后通过</span></div>
+        <div class="m-rrow">风险点上报范围 <span class="m-ok">${ic('check',12)} 确认</span></div>
+      </div>
+      <div class="m-rby">审理人：FDE 工程师 · 审理通过后自动透传分发并留痕</div>
+    </div>`;
+  }else{
+    b=`<div class="m-tag ok">${ic('check',13)} FDE 审理通过 · 已透传分发（无需中间人二次汇总）</div>
+    <div class="m-dist">${m.dist.map(d=>`<div class="m-drow"><span class="m-dto">${ic('send',13)} ${d[0]}</span><span class="m-ditem">${d[1]}</span><span class="m-dtag ${d[2]==='干系人'?'risk':''}">${d[2]}</span></div>`).join('')}</div>
+    <div class="m-rev"><div class="m-rh">${ic('layers',14)} 需求评审事项 · 会议留痕</div>
+      <div class="m-revn">以下事项记入本次会议留痕，作为后续相关会议的前置参考：</div>
+      ${m.reviewItems.map(x=>`<div class="m-li">${x}</div>`).join('')}</div>
+    <div class="m-hint">${ic('shield',13)}<div>全程留痕 · 干系人按需通知 · 无需中间人二次汇总（呼应"省掉中间人"与信条 16 可追溯）。</div></div>`;
+  }
+  document.querySelector('#m-body').innerHTML=b;
+  const NEXT=['开始 AI 主持会议','结束对话 · AI 拆解','提交 FDE 审理','审理通过 · 透传分发','完成 · 关闭会议'];
+  document.querySelector('#m-foot').innerHTML=`
+    <button class="m-back" ${mstep===0?'style="visibility:hidden"':''} onclick="gotoStep(${mstep-1})">← 上一步</button>
+    <span class="m-progress">第 ${mstep+1} / 5 步 · 全程留痕</span>
+    <button class="m-next" onclick="${mstep<4?`gotoStep(${mstep+1})`:'closeMeeting()'}">${NEXT[mstep]} ${mstep<4?ic('chev',14):''}</button>`;
+}
+
+/* ---------------- MiMo live chat ---------------- */
+function sysPrompt(){
+  const d=D(),det=d.detail[cur],p=[...d.projects,d.explore].find(x=>x.id===cur);
+  let c=`你是「砺」研发工作空间里的 AI 工作助手，正在协助一位${d.label}。`;
+  c+=`当前项目：${p.name}（阶段：${det.stage}；目标：${det.goal}`;
+  if(det.blocker)c+=`；当前卡点：${det.blocker.t}`;
+  c+=`）。回答原则：多给事实、历史参照与结构化拆解，少下绝对判断；涉及优先级或风险的最终结论交由负责人确认。请用简洁中文口语回答，能分点就分点。`;
+  return {role:'system',content:c};
+}
+async function callMiMo(messages,onToken){
+  const resp=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages})});
+  if(!resp.ok){let e={};try{e=await resp.json()}catch(_){}throw new Error((e.error||('HTTP '+resp.status))+(e.detail?(' · '+e.detail):''));}
+  const reader=resp.body.getReader(),dec=new TextDecoder();let buf='';
+  while(true){
+    const {value,done}=await reader.read();if(done)break;
+    buf+=dec.decode(value,{stream:true});let i;
+    while((i=buf.indexOf('\n\n'))>=0){
+      const line=buf.slice(0,i).trim();buf=buf.slice(i+2);
+      if(!line.startsWith('data:'))continue;
+      const data=line.slice(5).trim();
+      if(data==='[DONE]')return;
+      try{const j=JSON.parse(data);if(j.t)onToken(j.t);}catch(_){}
+    }
+  }
+}
+function addBubble(who,text){
+  const lt=document.querySelector('#liveThread');if(!lt)return null;
+  const nm=who==='user'?`我 <span class="role-mark">${D().en}</span>`:`项目助手 <span class="role-mark">MiMo · mimo-v2.5-pro</span>`;
+  const av=who==='user'?D().av:ic('sparkles',16);
+  const el=document.createElement('div');el.className='msg '+who;
+  el.innerHTML=`<span class="who">${av}</span><div class="body"><div class="nm">${nm}</div><div class="txt"></div></div>`;
+  el.querySelector('.txt').textContent=text;
+  lt.appendChild(el);
+  return el.querySelector('.txt');
+}
+function scrollThread(){const t=document.querySelector('#thread');if(t)t.scrollTop=t.scrollHeight;}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function mdLite(s){
+  s=esc(s);
+  s=s.replace(/^[\t ]*[\*\-]\s+/gm,'• ');
+  s=s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  return s.replace(/\n/g,'<br>');
+}
+async function sendChat(){
+  const ta=document.querySelector('#ta');const text=ta.value.trim();if(!text)return;
+  ta.value='';ta.style.height='auto';
+  addBubble('user',text);CONVO.push({role:'user',content:text});
+  const out=addBubble('ai','思考中…');if(out)out.classList.add('thinking');scrollThread();
+  let acc='',first=true;
+  try{
+    await callMiMo([sysPrompt(),...CONVO],tok=>{
+      if(first){out.textContent='';out.classList.remove('thinking');first=false;}
+      acc+=tok;out.innerHTML=mdLite(acc);scrollThread();
+    });
+    if(first){out.textContent='（模型未返回内容）';out.classList.remove('thinking');}
+    else CONVO.push({role:'assistant',content:acc});
+  }catch(e){
+    if(out){out.classList.remove('thinking');out.innerHTML='<span style="color:var(--red)">⚠ 调用失败：'+String(e.message||e)+'（请确认已用 <b>node server.js</b> 启动本地服务并通过 http://localhost:8787 打开）</span>';}
+  }
+  scrollThread();
+}
+$('#send').onclick=sendChat;
+$('#ta').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
+$('#thread').addEventListener('click',e=>{const t=e.target.closest('.todo');if(t){const p=t.querySelector('p');if(p){$('#ta').value=p.textContent.replace(/\s*→\s*$/,'').trim();$('#ta').focus();}}});
+$('#insertRow').addEventListener('click',e=>{const b=e.target.closest('.ins');if(b&&!b.classList.contains('mimo-badge')){$('#ta').value='请帮我'+b.textContent.trim();$('#ta').focus();}});
+
+/* ---------------- role + nav ---------------- */
+function applyRole(){
+  const isBoss=role==='boss';
+  document.body.dataset.role=role;
+  const d=isBoss?BOSS:D();
+  $('#navAv').textContent=d.av; $('#navAv').style.background=d.avc;
+  $('#navRole').textContent=d.label; $('#navRoleEn').textContent=d.en;
+  $$('#roleMenu button[data-role]').forEach(b=>b.classList.toggle('on',b.dataset.role===role));
+  if(isBoss){
+    setActiveView('cockpit');
+    renderCockpit();renderDecisions();
+  }else{
+    cur=d.projects[0].id;
+    setActiveView('workspace');
+    renderProjects();renderCenter();renderRail();renderCreate();
+  }
+}
+$$('.nav button').forEach(b=>b.onclick=()=>{
+  $$('.nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  $$('.view').forEach(v=>v.classList.remove('on'));
+  $('#view-'+b.dataset.view).classList.add('on');
+});
+$('#rolePick').onclick=e=>{e.stopPropagation();$('#roleMenu').classList.toggle('open')};
+document.onclick=()=>$('#roleMenu').classList.remove('open');
+$$('#roleMenu button[data-role]').forEach(b=>b.onclick=()=>{role=b.dataset.role;$('#roleMenu').classList.remove('open');applyRole();});
+
+/* cases filter */
+let cf='all';
+$$('.fchip').forEach(b=>b.onclick=()=>{$$('.fchip').forEach(x=>x.classList.remove('on'));b.classList.add('on');cf=b.dataset.f;renderCases(cf,$('#caseSearch').value);});
+$('#caseSearch').oninput=e=>renderCases(cf,e.target.value);
+
+/* misc icons + toast */
+$('#send').innerHTML=ic('send',17);
+$('#ce-ic').innerHTML=ic('sparkles',14);$('#cs-ic').innerHTML=ic('shield',14);
+$('#se-ic').innerHTML=ic('search',16);$('#bell').innerHTML=ic('bell',18);
+$('#toast-ic').innerHTML=ic('alert',16);$('#toast-ic2').innerHTML=ic('shield',12);
+const toast=$('#toast');
+$('#bell').onclick=e=>{e.stopPropagation();toast.classList.add('show')};
+$('#toastX').onclick=()=>toast.classList.remove('show');
+$('#ta').oninput=e=>{e.target.style.height='auto';e.target.style.height=Math.min(e.target.scrollHeight,120)+'px'};
+
+applyRole();renderCases();
+setTimeout(()=>toast.classList.add('show'),1100);
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>多模态大模型走向端侧部署 · AI 工作空间</title><script>(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}})();</script><link rel="stylesheet" href="https://cdn.jsdmirror.com/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css"><link rel="stylesheet" href="https://cdn.jsdmirror.com/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"><link rel="stylesheet" href="/_astro/_astro_content.BE-nEAj9.css"><style>.source-link[data-astro-cid-slrg64km]{border-top:1px solid var(--md-outline-variant);margin-top:2rem;padding-top:1.5rem}.source-link[data-astro-cid-slrg64km] a[data-astro-cid-slrg64km]{color:var(--md-primary);align-items:center;gap:.4rem;font-weight:600;display:inline-flex}.source-link[data-astro-cid-slrg64km] a[data-astro-cid-slrg64km]:hover{text-decoration:underline}.meta[data-astro-cid-slrg64km] i[data-astro-cid-slrg64km]{opacity:.7;margin-right:.3rem}
+</style></head><body><div class="site-bg" aria-hidden="true"></div><div class="site-bg-overlay" aria-hidden="true"></div><div class="site-bg-orbs" aria-hidden="true"></div><header class="md3-top-app-bar" id="md3-header"><div class="md3-topbar-inner"><a href="/" class="md3-topbar-title"><span class="md3-topbar-logo">✦</span><span>AI 工作空间</span></a><nav class="md3-nav-links" aria-label="主导航"><div class="md3-nav-item"><a href="/" class>首页</a></div><div class="md3-nav-item"><a href="/news/" class="active">AI 资讯</a></div><div class="md3-nav-item"><a href="/cases/" class>实践案例</a></div><div class="md3-nav-item"><a href="/prototypes/" class>最新原型</a></div><div class="md3-nav-item has-sub"><span class>更多</span><div class="md3-submenu"><a href="/decisions/" class><span>决策记录</span><i class="fa-solid fa-arrow-right md3-submenu-arrow"></i></a><a href="/posts/" class><span>经验帖</span><i class="fa-solid fa-arrow-right md3-submenu-arrow"></i></a></div></div></nav><div class="md3-topbar-actions"><button id="md3-theme-btn" class="md3-icon-btn" aria-label="切换主题" title="切换主题"><i class="fa-regular fa-sun md3-icon-light"></i><i class="fa-regular fa-moon md3-icon-dark"></i></button></div></div></header><main class="md3-main"><article class="post" data-astro-cid-slrg64km><a href="/news/" class="back" data-astro-cid-slrg64km><i class="fa-solid fa-arrow-left" data-astro-cid-slrg64km></i> 返回资讯列表</a><h1 data-astro-cid-slrg64km>多模态大模型走向端侧部署</h1><div class="meta" data-astro-cid-slrg64km><span data-astro-cid-slrg64km><i class="fa-solid fa-rss" data-astro-cid-slrg64km></i> 行业观察</span><span data-astro-cid-slrg64km><i class="fa-regular fa-user" data-astro-cid-slrg64km></i> 编辑</span><span data-astro-cid-slrg64km><i class="fa-regular fa-calendar" data-astro-cid-slrg64km></i> 2026/7/1</span></div><div class="content" data-astro-cid-slrg64km><h2 id="趋势">趋势</h2>
+<p>近期多家厂商发布端侧多模态模型方案，目标是在手机、车载、IoT 设备上直接运行视觉+语言模型，减少对云端的依赖。</p>
+<h2 id="关键点">关键点</h2>
+<ul>
+<li>推理框架优化使 7B 级别模型可在消费级芯片流畅运行</li>
+<li>量化技术（INT4/INT8）显著降低显存占用</li>
+<li>隐私与延迟优势明显，适合研发场景落地</li>
+</ul>
+<h2 id="对我们的启示">对我们的启示</h2>
+<p>嵌入式团队可关注端侧模型的工程化集成，与现有固件原型平台结合。</p>
+<blockquote>
+<p>这是一条示例资讯，删除或替换 <code>src/content/news/</code> 下的文件即可。</p>
+</blockquote>
+</div><div class="source-link" data-astro-cid-slrg64km><a href="https://example.com/news/multimodal-edge" target="_blank" rel="noopener" data-astro-cid-slrg64km><i class="fa-solid fa-up-right-from-square" data-astro-cid-slrg64km></i> 查看原文</a></div></article></main><footer class="md3-footer"><div class="md3-footer-inner"><span>© 2026 AI 工作空间</span><span class="md3-footer-meta">内容即代码 · Agent 可接入 · Powered by Astro</span></div></footer><script>
+    // 主题切换
+    const themeBtn = document.getElementById('md3-theme-btn');
+    themeBtn?.addEventListener('click', () => {
+      const cur = document.documentElement.dataset.theme;
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch(e) {}
+    });
+    // 滚动加阴影
+    const header = document.getElementById('md3-header');
+    window.addEventListener('scroll', () => {
+      header?.classList.toggle('scrolled', window.scrollY > 8);
+    }, { passive: true });
+  </script></body></html>

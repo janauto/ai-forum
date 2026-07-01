@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>AI 代码评审用例 · AI 工作空间</title><script>(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}})();</script><link rel="stylesheet" href="https://cdn.jsdmirror.com/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css"><link rel="stylesheet" href="https://cdn.jsdmirror.com/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"><link rel="stylesheet" href="/_astro/_astro_content.BE-nEAj9.css"><style>.badge[data-astro-cid-ebmwt3sx]{border-radius:var(--md-shape-full);padding:.18rem .6rem;font-size:.72rem;font-weight:600}.badge[data-astro-cid-ebmwt3sx].ok{color:#2e7d32;background:#4ade802e}[data-theme=dark] .badge[data-astro-cid-ebmwt3sx].ok{color:#6ee7a8;background:#4ade8026}.badge[data-astro-cid-ebmwt3sx].fail{color:#c62828;background:#f871712e}[data-theme=dark] .badge[data-astro-cid-ebmwt3sx].fail{color:#fca5a5;background:#f8717126}.badge[data-astro-cid-ebmwt3sx].pre{color:#f57f17;background:#fbbf242e}[data-theme=dark] .badge[data-astro-cid-ebmwt3sx].pre{color:#fcd34d;background:#fbbf2426}.badge[data-astro-cid-ebmwt3sx].unk{background:var(--md-secondary-container);color:var(--md-on-surface-variant)}.meta[data-astro-cid-ebmwt3sx] i[data-astro-cid-ebmwt3sx]{opacity:.7;margin-right:.3rem}
+</style></head><body><div class="site-bg" aria-hidden="true"></div><div class="site-bg-overlay" aria-hidden="true"></div><div class="site-bg-orbs" aria-hidden="true"></div><header class="md3-top-app-bar" id="md3-header"><div class="md3-topbar-inner"><a href="/" class="md3-topbar-title"><span class="md3-topbar-logo">✦</span><span>AI 工作空间</span></a><nav class="md3-nav-links" aria-label="主导航"><div class="md3-nav-item"><a href="/" class>首页</a></div><div class="md3-nav-item"><a href="/news/" class>AI 资讯</a></div><div class="md3-nav-item"><a href="/cases/" class="active">实践案例</a></div><div class="md3-nav-item"><a href="/prototypes/" class>最新原型</a></div><div class="md3-nav-item has-sub"><span class>更多</span><div class="md3-submenu"><a href="/decisions/" class><span>决策记录</span><i class="fa-solid fa-arrow-right md3-submenu-arrow"></i></a><a href="/posts/" class><span>经验帖</span><i class="fa-solid fa-arrow-right md3-submenu-arrow"></i></a></div></div></nav><div class="md3-topbar-actions"><button id="md3-theme-btn" class="md3-icon-btn" aria-label="切换主题" title="切换主题"><i class="fa-regular fa-sun md3-icon-light"></i><i class="fa-regular fa-moon md3-icon-dark"></i></button></div></div></header><main class="md3-main"><article class="post" data-astro-cid-ebmwt3sx><a href="/cases/" class="back" data-astro-cid-ebmwt3sx><i class="fa-solid fa-arrow-left" data-astro-cid-ebmwt3sx></i> 返回用例列表</a><h1 data-astro-cid-ebmwt3sx>AI 代码评审用例</h1><div class="meta" data-astro-cid-ebmwt3sx><span class="badge ok" data-astro-cid-ebmwt3sx>已验证</span><span data-astro-cid-ebmwt3sx><i class="fa-solid fa-user-tag" data-astro-cid-ebmwt3sx></i> 嵌入式</span><span data-astro-cid-ebmwt3sx><i class="fa-regular fa-user" data-astro-cid-ebmwt3sx></i> demo</span><span data-astro-cid-ebmwt3sx><i class="fa-regular fa-calendar" data-astro-cid-ebmwt3sx></i> 2026/6/30</span></div><div class="content" data-astro-cid-ebmwt3sx><h2 id="背景">背景</h2>
+<p>嵌入式固件代码量大、review 负担重，希望用 AI 辅助发现常见缺陷。</p>
+<h2 id="做法">做法</h2>
+<ol>
+<li>提交 PR 时触发 hook，把 diff 发给 MiMo</li>
+<li>模型返回问题列表，标注严重级别</li>
+<li>评审结果回写评论，人工二次确认</li>
+</ol>
+<h2 id="结果">结果</h2>
+<ul>
+<li>评审耗时从 30 分钟降到 8 分钟</li>
+<li>召回 3 处真实内存泄漏</li>
+</ul>
+<blockquote>
+<p>这是一个示例用例，删除或替换 <code>src/content/cases/</code> 下的文件即可。</p>
+</blockquote>
+</div></article></main><footer class="md3-footer"><div class="md3-footer-inner"><span>© 2026 AI 工作空间</span><span class="md3-footer-meta">内容即代码 · Agent 可接入 · Powered by Astro</span></div></footer><script>
+    // 主题切换
+    const themeBtn = document.getElementById('md3-theme-btn');
+    themeBtn?.addEventListener('click', () => {
+      const cur = document.documentElement.dataset.theme;
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem('theme', next); } catch(e) {}
+    });
+    // 滚动加阴影
+    const header = document.getElementById('md3-header');
+    window.addEventListener('scroll', () => {
+      header?.classList.toggle('scrolled', window.scrollY > 8);
+    }, { passive: true });
+  </script></body></html>
